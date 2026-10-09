@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Blacklist Registry - Stage 12{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <span class="text-xs font-bold text-red-600 uppercase tracking-wider block">Stage 12 Institutional Record</span>
+            <h1 class="text-2xl font-bold text-slate-900">Departmental Blacklist Registry</h1>
+            <p class="text-xs text-slate-500 mt-1">Organizations barred from hosting SIWES placements due to persistent low quality, non-compliance, or menial task exploitation.</p>
+        </div>
+        <a href="{% url 'coordinator_dashboard' %}" class="text-xs font-bold text-blue-900 hover:underline">&larr; Return to Dashboard</a>
+    </div>
+
+    <!-- Blacklist Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 bg-slate-900 text-white flex justify-between items-center">
+            <h2 class="text-base font-bold">Barred Host Organizations (Excluded from Directory)</h2>
+            <span class="px-3 py-1 bg-red-600 rounded-full text-xs font-bold">{{ blacklisted_records.count }} Total Barred</span>
+        </div>
+
+        {% if blacklisted_records %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-3.5">Organization</th>
+                            <th class="px-6 py-3.5">Industry Sector</th>
+                            <th class="px-6 py-3.5">Date Blacklisted</th>
+                            <th class="px-6 py-3.5">Blacklisted By</th>
+                            <th class="px-6 py-3.5">Formal Departmental Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for record in blacklisted_records %}
+                            <tr class="hover:bg-red-50/30 transition-colors">
+                                <td class="px-6 py-4 font-bold text-slate-900 text-sm">
+                                    {{ record.organization.name }}
+                                    <span class="px-2 py-0.5 bg-red-100 text-red-900 rounded font-bold text-[10px] uppercase block w-fit mt-1">Permanently Barred</span>
+                                </td>
+                                <td class="px-6 py-4">{{ record.organization.industry_sector }}</td>
+                                <td class="px-6 py-4 text-slate-500">{{ record.blacklisted_at|date:"M d, Y" }}</td>
+                                <td class="px-6 py-4 text-slate-700 font-semibold">{{ record.blacklisted_by.get_full_name|default:record.blacklisted_by.username }}</td>
+                                <td class="px-6 py-4 text-slate-700 max-w-sm font-medium">{{ record.reason }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="p-8 text-center text-xs text-slate-500">
+                No organizations currently blacklisted.
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

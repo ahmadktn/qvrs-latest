@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Academic Supervisor Portal - Stage 8{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mb-8 flex justify-between items-center">
+        <div>
+            <span class="text-xs text-amber-600 font-bold uppercase tracking-wider block">Stage 8 Post-Placement Evaluation</span>
+            <h1 class="text-2xl font-bold text-slate-900">Academic Supervisor Assessment Portal</h1>
+            <p class="text-xs text-slate-500 mt-1">Supervising Faculty: {{ user.get_full_name }}</p>
+        </div>
+        <span class="px-3 py-1 bg-amber-100 text-amber-900 border border-amber-200 rounded-full text-xs font-bold">
+            {{ pending_assessments.count }} Pending Evaluation(s)
+        </span>
+    </div>
+
+    <!-- Pending Assessments Queue -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-10">
+        <div class="p-6 border-b border-slate-100">
+            <h2 class="text-base font-bold text-slate-900">Completed Placements Awaiting Supervisor Assessment</h2>
+        </div>
+
+        {% if pending_assessments %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-3.5">Student</th>
+                            <th class="px-6 py-3.5">Host Organization</th>
+                            <th class="px-6 py-3.5">Completion Date</th>
+                            <th class="px-6 py-3.5 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for plc in pending_assessments %}
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-slate-900">
+                                    {{ plc.student.user.get_full_name }}
+                                    <span class="block text-[10px] text-slate-400 font-medium">{{ plc.student.registration_number }}</span>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-blue-900">{{ plc.organization.name }}</td>
+                                <td class="px-6 py-4 text-slate-500">{{ plc.completion_date|date:"M d, Y" }}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{% url 'submit_supervisor_assessment' plc.id %}" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow transition-colors">
+                                        Fill Assessment Form &rarr;
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="p-8 text-center text-xs text-slate-500">
+                No completed student placements currently pending your assessment.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Submitted Assessments History -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100">
+            <h2 class="text-base font-bold text-slate-900">Submitted Assessments History</h2>
+        </div>
+
+        {% if completed_assessments %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-3.5">Host Organization</th>
+                            <th class="px-6 py-3.5">Student</th>
+                            <th class="px-6 py-3.5">Submitted Rating</th>
+                            <th class="px-6 py-3.5">Assessment Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for ass in completed_assessments %}
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-blue-900">{{ ass.organization.name }}</td>
+                                <td class="px-6 py-4">{{ ass.placement.student.user.get_full_name }} ({{ ass.placement.student.registration_number }})</td>
+                                <td class="px-6 py-4 font-bold text-amber-600">★ {{ ass.overall_rating }} / 5.00</td>
+                                <td class="px-6 py-4 text-slate-500">{{ ass.assessed_at|date:"M d, Y" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="p-8 text-center text-xs text-slate-500">
+                No supervisor assessments submitted yet.
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

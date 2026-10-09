@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Registration - BUK-SIWES QOVRS{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="bg-blue-900 p-6 text-white text-center">
+            <h2 class="text-xl font-bold">Student Account Registration</h2>
+            <p class="text-xs text-blue-200 mt-1">B.Sc. Software Engineering SIWES Placement Portal</p>
+        </div>
+
+        <form method="post" class="p-8 space-y-5">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">First Name</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<p class="text-xs text-red-600 mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Last Name</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<p class="text-xs text-red-600 mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<p class="text-xs text-red-600 mt-1">{{ form.username.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">BUK Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<p class="text-xs text-red-600 mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">BUK Registration Number</label>
+                    {{ form.registration_number }}
+                    {% if form.registration_number.errors %}<p class="text-xs text-red-600 mt-1">{{ form.registration_number.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Phone Number</label>
+                    {{ form.phone_number }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Department</label>
+                    {{ form.department }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Academic Level</label>
+                    {{ form.level }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">SIWES Session</label>
+                    {{ form.session }}
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}<p class="text-xs text-red-600 mt-1">{{ form.password.errors.0 }}</p>{% endif %}
+            </div>
+
+            <button type="submit" class="w-full py-3 px-4 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow-lg transition-colors text-sm">
+                Complete Student Registration
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

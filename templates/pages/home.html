@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - SIWES Quality, Organization Vetting & Rating System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white relative overflow-hidden py-16 md:py-24 border-b border-blue-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-3xl">
+            <div class="inline-flex items-center space-x-2 bg-blue-800/80 backdrop-blur border border-blue-600/50 px-3.5 py-1.5 rounded-full text-xs font-semibold text-amber-400 mb-6">
+                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <span>BUK Software Engineering SIWES Closed-Loop QA</span>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-6">
+                SIWES Quality, Organization Vetting & Rating System <span class="text-amber-400">(BUK-SIWES QOVRS)</span>
+            </h1>
+            <p class="text-base md:text-lg text-slate-300 mb-8 leading-relaxed">
+                Bridging classroom theory with verified industry training. Ensuring curriculum-relevant placements through proactive host organization vetting and post-placement supervisor evaluation.
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <a href="{% url 'approved_directory' %}" class="inline-flex items-center space-x-2 bg-amber-600 hover:bg-amber-500 text-white font-bold px-6 py-3.5 rounded-xl shadow-lg hover:shadow-amber-500/20 transition-all text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span>Browse Approved Organizations</span>
+                </a>
+                <a href="{% url 'organization_submit' %}" class="inline-flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3.5 rounded-xl border border-white/20 transition-all text-sm">
+                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <span>Register / Submit Organization</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dynamic KPI Statistics Bar -->
+<section class="bg-white border-b border-slate-200 py-8 shadow-inner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="text-3xl font-extrabold text-blue-900">{{ stats.total_approved }}</div>
+                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1">Vetted & Approved Firms</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="text-3xl font-extrabold text-emerald-600">{{ stats.total_placements }}</div>
+                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1">Completed Placements</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="text-3xl font-extrabold text-amber-600">{{ stats.total_assessments }}</div>
+                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1">Supervisor Quality Assessments</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Value Pillars Section -->
+<section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-2xl font-bold text-slate-900 mb-3">Core Quality Assurance Pillars</h2>
+        <p class="text-sm text-slate-600">Addressing the absence of institutional memory and preventing placement of students in non-technical or menial training roles.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Pillar 1 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center mb-5">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">1. Pre-Placement Vetting</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Departmental review of core business operations and proposed training roles before students accept offers, filtering out menial tasks such as photocopying or clerical errands.
+            </p>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-5">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">2. Structured Supervisor Evaluation</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Post-placement evaluation across 4 dimensions: Skill Relevance, Supervision Adequacy, Curriculum Alignment, and Recommendation for Future Placements.
+            </p>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center mb-5">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">3. Low-Rating Flagging & Blacklisting</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Automated threshold detection when an organization's average rating drops below 3.00 stars, triggering mandatory departmental review and blacklisting if necessary.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Approved Organizations -->
+{% if featured_orgs %}
+<section class="py-12 bg-slate-100/70 border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900">Featured Approved Organizations</h2>
+                <p class="text-xs text-slate-500">Top-rated host organizations verified for B.Sc. Software Engineering placements.</p>
+            </div>
+            <a href="{% url 'approved_directory' %}" class="text-xs font-bold text-blue-900 hover:text-amber-600 flex items-center space-x-1">
+                <span>View Full Directory</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for org in featured_orgs %}
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-900 border border-blue-200 uppercase">
+                                {{ org.industry_sector }}
+                            </span>
+                            <div class="flex items-center space-x-1 bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded text-xs font-bold">
+                                <svg class="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                <span>{{ org.rating_summary.average_rating|default:"0.00" }} / 5.00</span>
+                            </div>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900 mb-2">{{ org.name }}</h3>
+                        <p class="text-xs text-slate-600 line-clamp-2 mb-4">{{ org.services_provided }}</p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-xs text-slate-500">{{ org.city }}, {{ org.state }}</span>
+                        <a href="{% url 'org_detail' org.id %}" class="text-xs font-bold text-blue-900 hover:text-amber-600">View Details &rarr;</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

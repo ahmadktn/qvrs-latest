@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Supervisor Assessment - {{ placement.organization.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <a href="{% url 'supervisor_assessments' %}" class="inline-flex items-center space-x-1 text-xs font-bold text-blue-900 hover:underline mb-6">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        <span>Back to Supervisor Portal</span>
+    </a>
+
+    <!-- Context Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-8 flex justify-between items-center">
+        <div>
+            <span class="text-xs font-bold text-amber-600 uppercase tracking-wider block mb-1">Stage 8 Post-Placement Supervisor Evaluation</span>
+            <h1 class="text-2xl font-bold text-slate-900">{{ placement.organization.name }}</h1>
+            <p class="text-xs text-slate-500 mt-1">Student: <strong>{{ placement.student.user.get_full_name }}</strong> ({{ placement.student.registration_number }})</p>
+        </div>
+        <div class="text-right">
+            <span class="px-3 py-1 bg-emerald-100 text-emerald-900 font-bold rounded-full text-xs">Placement Completed</span>
+        </div>
+    </div>
+
+    <!-- Structured Form -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl p-8">
+        <h2 class="text-lg font-bold text-slate-900 mb-2">Structured 4-Dimension Evaluation Rubric</h2>
+        <p class="text-xs text-slate-500 mb-8">Score each dimension from 1 (Strongly Disagree / Low) to 5 (Strongly Agree / Excellent).</p>
+
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
+
+            <!-- Question 1 -->
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                <label class="block text-sm font-bold text-slate-900 mb-1">
+                    Dimension 1: Skill & Practical Training Relevance *
+                </label>
+                <p class="text-xs text-slate-500 mb-3">Did the student gain curriculum-relevant, practical software engineering skills rather than menial, unrelated tasks (e.g., photocopying, running errands, idle waiting)?</p>
+                {{ form.q1_skill_relevance }}
+            </div>
+
+            <!-- Question 2 -->
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                <label class="block text-sm font-bold text-slate-900 mb-1">
+                    Dimension 2: Organization Supervision Adequacy *
+                </label>
+                <p class="text-xs text-slate-500 mb-3">Was the host organization's technical industry supervision adequate, committed, and constructive throughout the placement duration?</p>
+                {{ form.q2_supervision_adequacy }}
+            </div>
+
+            <!-- Question 3 -->
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                <label class="block text-sm font-bold text-slate-900 mb-1">
+                    Dimension 3: Curriculum Alignment *
+                </label>
+                <p class="text-xs text-slate-500 mb-3">Was the training genuinely aligned with the departmental B.Sc. Software Engineering curriculum?</p>
+                {{ form.q3_curriculum_alignment }}
+            </div>
+
+            <!-- Question 4 -->
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                <label class="block text-sm font-bold text-slate-900 mb-1">
+                    Dimension 4: Recommendation for Future Placements *
+                </label>
+                <p class="text-xs text-slate-500 mb-3">Would you recommend this host organization for future BUK Software Engineering student placements?</p>
+                {{ form.q4_recommend_future }}
+            </div>
+
+            <!-- Qualitative observed tasks -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Observed Student Tasks & Engineering Activities *</label>
+                {{ form.observed_student_tasks }}
+            </div>
+
+            <!-- Qualitative Narrative -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Supervisor Qualitative Findings & Narrative *</label>
+                {{ form.qualitative_feedback }}
+            </div>
+
+            <button type="submit" class="w-full py-4 px-6 bg-amber-600 hover:bg-amber-500 text-white font-extrabold rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                Submit Official Assessment & Update Organization Quality Record &rarr;
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

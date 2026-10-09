@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}Departmental Vetting - {{ org.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <a href="{% url 'coordinator_dashboard' %}" class="inline-flex items-center space-x-1 text-xs font-bold text-blue-900 hover:underline mb-6">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        <span>Back to Coordinator Command Center</span>
+    </a>
+
+    <!-- Page Header -->
+    <div class="bg-slate-900 rounded-2xl p-6 text-white mb-8 shadow-md border border-slate-800 flex justify-between items-center">
+        <div>
+            <span class="text-xs text-amber-400 font-semibold block mb-1">Stage 2 & 3: Departmental Quality Vetting</span>
+            <h1 class="text-2xl font-bold">{{ org.name }}</h1>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-blue-950">Awaiting Vetting</span>
+    </div>
+
+    <!-- Past History Banner if exists -->
+    {% if past_history.placements_count > 0 %}
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8 flex items-center space-x-3 text-xs text-blue-900">
+            <svg class="w-5 h-5 text-blue-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div>
+                <strong>Historical Track Record Available:</strong> This organization previously hosted {{ past_history.placements_count }} BUK student placements with an aggregated supervisor rating of <strong>{{ past_history.rating_summary.average_rating|default:"N/A" }} / 5.00 Stars</strong>.
+            </div>
+        </div>
+    {% else %}
+        <div class="bg-slate-100 border border-slate-200 rounded-xl p-4 mb-8 text-xs text-slate-600">
+            <strong>First-Time Applicant:</strong> No prior placement record found in BUK SIWES system history.
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Left Column: Candidate Organization & Role Dossier -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">Corporate Profile & Operations</h3>
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <span class="text-slate-500 block">Sector:</span>
+                        <strong class="text-slate-900">{{ org.industry_sector }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">CAC Registration:</span>
+                        <strong class="text-slate-900">{{ org.registration_number|default:"N/A" }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Location:</span>
+                        <strong class="text-slate-900">{{ org.city }}, {{ org.state }}</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Website:</span>
+                        <a href="{{ org.website }}" target="_blank" class="text-blue-900 font-bold hover:underline">{{ org.website|default:"None" }}</a>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-xs text-slate-500 block mb-1">Services & Commercial Operations:</span>
+                    <p class="text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100 leading-relaxed">{{ org.services_provided }}</p>
+                </div>
+            </div>
+
+            <!-- Proposed Training Opportunity -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">Proposed Training Role</h3>
+                {% for opp in opportunities %}
+                    <div class="space-y-3 text-xs">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-base font-bold text-blue-900">{{ opp.role_title }}</h4>
+                            <span class="px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-md font-bold">{{ opp.slots_available }} Slots</span>
+                        </div>
+                        <div>
+                            <strong class="text-slate-900 block mb-1">Specific Day-to-Day Tasks:</strong>
+                            <p class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-slate-800 leading-relaxed">{{ opp.role_description }}</p>
+                        </div>
+                        <div>
+                            <strong class="text-slate-900 block mb-1">Expected Technical Skills:</strong>
+                            <p class="text-blue-900 font-semibold bg-blue-50 p-2.5 rounded-lg border border-blue-100">{{ opp.expected_skills }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Right Column: Interactive Vetting Form & Rubrics -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm h-fit">
+            <h2 class="text-lg font-bold text-slate-900 mb-2">Departmental Vetting Evaluation</h2>
+            <p class="text-xs text-slate-500 mb-6">Score core business match and training role suitability against B.Sc. Software Engineering curriculum.</p>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Vetting Decision *</label>
+                    {{ form.decision }}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Core Business Relevance *</label>
+                        {{ form.core_business_match_score }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Training Role Suitability *</label>
+                        {{ form.training_role_suitability_score }}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Institutional Capacity Assessment *</label>
+                    {{ form.capacity_assessment }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Coordinator Written Rationale & Comments *</label>
+                    {{ form.coordinator_comments }}
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+                    <button type="submit" class="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl shadow-lg transition-colors text-xs uppercase tracking-wider">
+                        Submit Vetting Evaluation &rarr;
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

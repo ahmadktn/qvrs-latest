@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Placement Management Queue - Coordinator{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">SIWES Student Placement Management</h1>
+            <p class="text-xs text-slate-500 mt-1">Review student placement requests, assign Academic Supervisors, and mark completed placements.</p>
+        </div>
+        <a href="{% url 'coordinator_dashboard' %}" class="text-xs font-bold text-blue-900 hover:underline">&larr; Return to Dashboard</a>
+    </div>
+
+    <!-- Pending Requests Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-10">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+            <h2 class="text-base font-bold text-slate-900">Pending Student Placement Applications</h2>
+            <span class="px-3 py-1 bg-amber-100 text-amber-900 rounded-full text-xs font-bold">{{ pending_requests.count }} Pending</span>
+        </div>
+
+        {% if pending_requests %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-3.5">Student</th>
+                            <th class="px-6 py-3.5">Host Organization</th>
+                            <th class="px-6 py-3.5">Proposed Role</th>
+                            <th class="px-6 py-3.5">Placement Duration</th>
+                            <th class="px-6 py-3.5 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for req in pending_requests %}
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-slate-900">
+                                    {{ req.student.user.get_full_name|default:req.student.user.username }}
+                                    <span class="block text-[10px] text-slate-400 font-medium">{{ req.student.registration_number }}</span>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-blue-900">{{ req.organization.name }}</td>
+                                <td class="px-6 py-4">{{ req.training_opportunity.role_title|default:"General Internship" }}</td>
+                                <td class="px-6 py-4 text-slate-500">{{ req.proposed_start_date|date:"M d, Y" }} &rarr; {{ req.proposed_end_date|date:"M d, Y" }}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{% url 'coordinator_process_placement' req.id %}" class="px-3.5 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg font-bold shadow transition-colors">
+                                        Process & Assign Supervisor &rarr;
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="p-8 text-center text-xs text-slate-500">
+                No pending student placement requests awaiting review.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Active Placements Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+            <h2 class="text-base font-bold text-slate-900">All Active & Historical Placements</h2>
+            <span class="px-3 py-1 bg-blue-100 text-blue-900 rounded-full text-xs font-bold">{{ all_placements.count }} Total</span>
+        </div>
+
+        {% if all_placements %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-3.5">Student</th>
+                            <th class="px-6 py-3.5">Host Organization</th>
+                            <th class="px-6 py-3.5">Assigned Academic Supervisor</th>
+                            <th class="px-6 py-3.5">Status</th>
+                            <th class="px-6 py-3.5 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for plc in all_placements %}
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-slate-900">
+                                    {{ plc.student.user.get_full_name }}
+                                    <span class="block text-[10px] text-slate-400 font-medium">{{ plc.student.registration_number }}</span>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-blue-900">{{ plc.organization.name }}</td>
+                                <td class="px-6 py-4 text-slate-700">
+                                    {{ plc.academic_supervisor.get_full_name|default:"Unassigned" }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if plc.status == 'ONGOING' %}
+                                        <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-[10px] font-extrabold">Active / Ongoing</span>
+                                    {% elif plc.status == 'COMPLETED' %}
+                                        <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-extrabold">Completed</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    {% if plc.status == 'ONGOING' %}
+                                        <form method="post" action="{% url 'mark_placement_complete' plc.id %}" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" onclick="return confirm('Mark this placement as COMPLETED? This will trigger mandatory supervisor assessment requirement.')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold transition-colors">
+                                                Mark Completed &rarr;
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <span class="text-slate-400 font-medium text-[11px]">Evaluation Triggered</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

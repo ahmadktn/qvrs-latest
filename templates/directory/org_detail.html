@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ org.name }} - Quality Track Record{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <!-- Top Navigation -->
+    <a href="{% url 'approved_directory' %}" class="inline-flex items-center space-x-1 text-xs font-bold text-blue-900 hover:underline mb-6">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        <span>Back to Approved Directory</span>
+    </a>
+
+    <!-- Main Header Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-hidden mb-8">
+        <div class="bg-slate-900 p-8 text-white flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 gap-4">
+            <div>
+                <div class="flex items-center space-x-2 mb-2">
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-blue-800 text-blue-200 border border-blue-700 uppercase">
+                        {{ org.industry_sector }}
+                    </span>
+                    <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-emerald-800 text-emerald-200 border border-emerald-700 uppercase">
+                        {{ org.get_status_display }}
+                    </span>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-extrabold">{{ org.name }}</h1>
+                <p class="text-xs text-slate-400 mt-1">{{ org.address }}, {{ org.city }}, {{ org.state }}</p>
+            </div>
+
+            <!-- Big Rating Score Display -->
+            <div class="bg-blue-950 p-4 rounded-xl border border-blue-800 text-center shrink-0 min-w-[160px]">
+                <div class="text-3xl font-black text-amber-400">
+                    ★ {{ rating_summary.average_rating|default:"0.00" }}
+                </div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">
+                    {{ rating_summary.total_assessments }} Supervisor Assessment(s)
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Left 2 Cols: Details & Opportunities -->
+            <div class="md:col-span-2 space-y-6">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2 mb-3">About Core Business & Services</h3>
+                    <p class="text-xs text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">{{ org.services_provided }}</p>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2 mb-3">Proposed SIWES Training Roles</h3>
+                    {% for opp in opportunities %}
+                        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3 mb-4">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-base font-bold text-blue-900">{{ opp.role_title }}</h4>
+                                <span class="px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-full text-xs font-bold">
+                                    {{ opp.slots_available }} Placement Slot(s)
+                                </span>
+                            </div>
+                            <div class="text-xs text-slate-700">
+                                <strong class="text-slate-900 block mb-1">Day-to-Day Tasks & Responsibilities:</strong>
+                                <p class="bg-slate-50 p-3 rounded-lg border border-slate-100">{{ opp.role_description }}</p>
+                            </div>
+                            <div class="text-xs text-slate-700">
+                                <strong class="text-slate-900 block mb-1">Tools & Technical Skills:</strong>
+                                <p class="text-blue-900 font-semibold">{{ opp.expected_skills }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Action Button for Student -->
+                {% if user.is_authenticated and user.is_student %}
+                    <div class="pt-4">
+                        <a href="{% url 'student_request_placement' org.id %}" class="block w-full text-center py-4 bg-amber-600 hover:bg-amber-500 text-white font-extrabold rounded-xl shadow-lg transition-colors text-sm uppercase tracking-wider">
+                            Apply for SIWES Placement Here &rarr;
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Right Col: 4-Dimension Quality Track Record -->
+            <div class="space-y-6">
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2 mb-4">Quality Track Record</h3>
+
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <div class="flex justify-between text-slate-700 mb-1 font-semibold">
+                                <span>1. Practical Skill Relevance</span>
+                                <span class="font-bold text-slate-900">{{ rating_summary.avg_skill_relevance }} / 5.0</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div class="bg-blue-900 h-2 rounded-full" style="width: {% widthratio rating_summary.avg_skill_relevance 5 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-700 mb-1 font-semibold">
+                                <span>2. Supervision Adequacy</span>
+                                <span class="font-bold text-slate-900">{{ rating_summary.avg_supervision_adequacy }} / 5.0</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div class="bg-emerald-600 h-2 rounded-full" style="width: {% widthratio rating_summary.avg_supervision_adequacy 5 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-700 mb-1 font-semibold">
+                                <span>3. Curriculum Alignment</span>
+                                <span class="font-bold text-slate-900">{{ rating_summary.avg_curriculum_alignment }} / 5.0</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div class="bg-amber-600 h-2 rounded-full" style="width: {% widthratio rating_summary.avg_curriculum_alignment 5 100 %}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-700 mb-1 font-semibold">
+                                <span>4. Future Recommendation</span>
+                                <span class="font-bold text-slate-900">{{ rating_summary.avg_recommendation }} / 5.0</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div class="bg-purple-600 h-2 rounded-full" style="width: {% widthratio rating_summary.avg_recommendation 5 100 %}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-200 text-[11px] text-slate-500">
+                        Total Completed BUK Placements: <strong>{{ completed_placements_count }}</strong>
+                    </div>
+                </div>
+
+                <!-- Recent Anonymized Supervisor Evaluations -->
+                {% if recent_assessments %}
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Supervisor Excerpts</h4>
+                        <div class="space-y-3">
+                            {% for ass in recent_assessments %}
+                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="font-bold text-slate-800">★ {{ ass.overall_rating }} Stars</span>
+                                        <span class="text-[10px] text-slate-400">{{ ass.assessed_at|date:"M Y" }}</span>
+                                    </div>
+                                    <p class="text-slate-600 italic line-clamp-2">"{{ ass.qualitative_feedback }}"</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

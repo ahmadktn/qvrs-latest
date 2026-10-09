@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}My Placements - Student Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <span class="text-xs text-amber-600 font-bold uppercase tracking-wider block">Student Dashboard</span>
+            <h1 class="text-2xl font-bold text-slate-900">{{ student.user.get_full_name }}</h1>
+            <p class="text-xs text-slate-500">{{ student.registration_number }} &bull; {{ student.course_of_study }} ({{ student.level }})</p>
+        </div>
+        <a href="{% url 'approved_directory' %}" class="px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl text-xs shadow transition-colors flex items-center space-x-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <span>Browse Approved Host Organizations</span>
+        </a>
+    </div>
+
+    <!-- Active Placement Banner if any -->
+    {% if active_placements %}
+        {% for plc in active_placements %}
+            <div class="p-6 rounded-2xl border mb-8 {% if plc.status == 'ONGOING' %}bg-blue-900 text-white border-blue-800{% else %}bg-emerald-900 text-white border-emerald-800{% endif %} shadow-lg">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="px-3 py-1 bg-amber-500 text-blue-950 font-black rounded-full text-[10px] uppercase">
+                        {{ plc.get_status_display }}
+                    </span>
+                    <span class="text-xs text-blue-200">{{ plc.start_date|date:"M Y" }} &ndash; {{ plc.end_date|date:"M Y" }}</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Host Organization: {{ plc.organization.name }}</h3>
+                <p class="text-xs text-blue-100 mb-4">Assigned Academic Supervisor: <strong>{{ plc.academic_supervisor.get_full_name|default:"Departmental Supervisor Assigned" }}</strong></p>
+                {% if plc.status == 'COMPLETED' %}
+                    <div class="bg-emerald-950/60 p-3 rounded-xl border border-emerald-700/50 text-xs text-emerald-200">
+                        SIWES placement marked completed. Post-placement quality evaluation has been handed over to your academic supervisor.
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Student Placement Applications Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100">
+            <h2 class="text-base font-bold text-slate-900">Placement Application History</h2>
+        </div>
+
+        {% if requests_list %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-3.5">Host Organization</th>
+                            <th class="px-6 py-3.5">Training Role</th>
+                            <th class="px-6 py-3.5">Application Date</th>
+                            <th class="px-6 py-3.5">Status</th>
+                            <th class="px-6 py-3.5">Coordinator Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for req in requests_list %}
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-bold text-blue-900">{{ req.organization.name }}</td>
+                                <td class="px-6 py-4">{{ req.training_opportunity.role_title|default:"Software Engineering Intern" }}</td>
+                                <td class="px-6 py-4 text-slate-500">{{ req.created_at|date:"M d, Y" }}</td>
+                                <td class="px-6 py-4">
+                                    {% if req.status == 'PENDING' %}
+                                        <span class="px-2.5 py-1 bg-amber-100 text-amber-900 rounded-full text-[10px] font-bold">Awaiting Coordinator Review</span>
+                                    {% elif req.status == 'ACCEPTED' %}
+                                        <span class="px-2.5 py-1 bg-emerald-100 text-emerald-900 rounded-full text-[10px] font-bold">Accepted & Approved</span>
+                                    {% elif req.status == 'REJECTED' %}
+                                        <span class="px-2.5 py-1 bg-red-100 text-red-900 rounded-full text-[10px] font-bold">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-slate-600 italic">
+                                    {{ req.coordinator_feedback|default:"No notes yet." }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="p-8 text-center text-xs text-slate-500">
+                You have not submitted any placement requests yet.
+                <a href="{% url 'approved_directory' %}" class="block mt-2 font-bold text-blue-900 hover:underline">Browse Approved Host Organizations &rarr;</a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
