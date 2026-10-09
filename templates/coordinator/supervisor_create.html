@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Academic Supervisor - Coordinator{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="bg-blue-900 p-6 text-white text-center">
+            <h2 class="text-xl font-bold">Register Academic Supervisor Account</h2>
+            <p class="text-xs text-blue-200 mt-1">SIWES Quality Assurance Faculty Onboarding</p>
+        </div>
+
+        <form method="post" class="p-8 space-y-5">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs">
+                    <div class="font-bold flex items-center space-x-1 mb-2">
+                        <svg class="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Please resolve the following error(s):</span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 font-semibold text-red-700">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">First Name *</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.first_name.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Last Name *</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.last_name.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Username *</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.username.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">BUK Email Address *</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.email.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Phone Number</label>
+                {{ form.phone_number }}
+            </div>
+
+            <!-- Password Field with View Toggle -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password *</label>
+                <div class="relative">
+                    {{ form.password }}
+                    <button type="button" onclick="togglePasswordVisibility('id_sup_password', 'eye_icon_sup_pwd')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 p-1" title="Toggle password view">
+                        <svg id="eye_icon_sup_pwd" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </button>
+                </div>
+                {% if form.password.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.password.errors.0 }}</p>{% endif %}
+            </div>
+
+            <!-- Confirm Password Field with View Toggle -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Confirm Password *</label>
+                <div class="relative">
+                    {{ form.confirm_password }}
+                    <button type="button" onclick="togglePasswordVisibility('id_sup_confirm_password', 'eye_icon_sup_confirm')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 p-1" title="Toggle password view">
+                        <svg id="eye_icon_sup_confirm" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </button>
+                </div>
+                {% if form.confirm_password.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.confirm_password.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="flex space-x-3 pt-3">
+                <button type="submit" class="flex-1 py-3 px-4 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl shadow-lg transition-colors text-xs uppercase tracking-wider">
+                    Register Academic Supervisor Account
+                </button>
+                <a href="{% url 'coordinator_supervisors_list' %}" class="py-3 px-4 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function togglePasswordVisibility(inputId, eyeIconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(eyeIconId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a10.025 10.025 0 013.122-.463c4.478 0 8.268 2.943 9.542 7a9.969 9.969 0 01-2.193 3.568M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18"></path>';
+        } else {
+            input.type = 'password';
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
+        }
+    }
+</script>
+{% endblock %}

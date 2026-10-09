@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-slate-50">
 <head>
@@ -11,14 +12,9 @@
             theme: {
                 extend: {
                     colors: {
-                        buk: {
-                            navy: '#1E3A8A',
-                            dark: '#0F172A',
-                            gold: '#D97706',
-                            emerald: '#059669',
-                            crimson: '#DC2626',
-                            amber: '#EA580C'
-                        }
+                        onyx: '#0C090A',
+                        'steel-azure': '#084887',
+                        'sky-blue': '#85C7F2',
                     }
                 }
             }
@@ -31,15 +27,138 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="flex flex-col min-h-full bg-slate-50 text-slate-800 antialiased">
+<body class="min-h-full bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen">
 
-    <!-- Header Navigation Bar -->
-    <header class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+{% if user.is_authenticated and user.is_coordinator %}
+    <!-- COORDINATOR SIDEBAR WRAPPER START -->
+    <div class="flex min-h-screen bg-slate-50 flex-1">
+
+        <!-- Left Fixed Sidebar in Onyx & Steel Azure -->
+        <aside class="w-64 bg-onyx text-slate-300 flex flex-col justify-between border-r border-slate-800 shrink-0 sticky top-0 h-screen">
+            <div>
+                <!-- Brand Header with Official BUK Logo -->
+                <div class="p-5 border-b border-slate-800 bg-[#070506] flex items-center space-x-3">
+                    <img src="{% static 'buk_logo.jpeg' %}" alt="BUK Crest" class="w-10 h-10 rounded-lg object-contain bg-white p-0.5 shadow">
+                    <div>
+                        <span class="text-sm font-extrabold text-white block leading-none">BUK-SIWES QOVRS</span>
+                        <span class="text-[10px] text-sky-blue font-semibold tracking-wider uppercase">Coordinator Portal</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Sidebar Section Links -->
+                <nav class="p-4 space-y-1.5 text-xs font-semibold">
+                    <div class="text-[10px] uppercase font-bold text-slate-500 tracking-wider px-3 mb-2 pt-2">Management Center</div>
+                    
+                    <a href="{% url 'coordinator_dashboard' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-sky-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        <span>Command Center</span>
+                    </a>
+
+                    <a href="{% url 'coordinator_placements_queue' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-sky-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 022 2h2a2 2 0 022-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        <span>Placement Requests</span>
+                    </a>
+
+                    <a href="{% url 'coordinator_supervisors_list' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span>Academic Supervisors</span>
+                    </a>
+
+                    <div class="text-[10px] uppercase font-bold text-slate-500 tracking-wider px-3 mb-2 pt-4">Quality & Blacklist</div>
+
+                    <a href="{% url 'coordinator_flagged_reviews' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <span>Flagged Reviews</span>
+                    </a>
+
+                    <a href="{% url 'blacklist_registry' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                        <span>Blacklist Registry</span>
+                    </a>
+
+                    <div class="text-[10px] uppercase font-bold text-slate-500 tracking-wider px-3 mb-2 pt-4">Directory & Submission</div>
+
+                    <a href="{% url 'approved_directory' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        <span>Approved Directory</span>
+                    </a>
+
+                    <!-- <a href="{% url 'home' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m-9 9a9 9 0 019-9"></path></svg>
+                        <span>Public Home</span>
+                    </a> -->
+                </nav>
+            </div>
+
+            <!-- User Footer Profile Card -->
+            <div class="p-4 border-t border-slate-800 bg-[#070506] flex items-center justify-between">
+                <div class="flex items-center space-x-2.5 overflow-hidden">
+                    <div class="w-8 h-8 rounded-lg bg-sky-blue text-steel-azure font-bold flex items-center justify-center text-xs shrink-0">
+                        {{ user.username|slice:":2"|upper }}
+                    </div>
+                    <div class="truncate">
+                        <span class="text-xs font-bold text-white block truncate">{{ user.get_full_name|default:user.username }}</span>
+                        <span class="text-[10px] text-sky-blue font-medium block">SIWES Coordinator</span>
+                    </div>
+                </div>
+                <a href="{% url 'logout' %}" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors" title="Sign Out">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Right Content Body -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top Header Bar -->
+            <header class="bg-white border-b border-slate-200 py-3 px-6 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+                <div class="flex items-center space-x-3 text-xs font-semibold text-slate-500">
+                    <img src="{% static 'buk_logo.jpeg' %}" alt="BUK Crest" class="w-7 h-7 rounded object-contain">
+                    <span class="text-steel-azure font-bold">Bayero University Kano</span>
+                    <span>/</span>
+                    <span>Department of Software Engineering</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="{% url 'organization_submit' %}" class="px-3.5 py-1.5 bg-steel-azure hover:bg-[#063768] text-white rounded-lg text-xs font-bold transition-colors">
+                        + Submit Organization
+                    </a>
+                </div>
+            </header>
+
+            <!-- Global Messages Container -->
+            {% if messages %}
+                <div class="max-w-7xl mx-auto px-6 pt-4 w-full">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-xl shadow-sm border mb-3 flex items-start space-x-3 
+                            {% if message.tags == 'error' %}bg-red-50 text-red-800 border-red-200
+                            {% elif message.tags == 'warning' %}bg-amber-50 text-amber-800 border-amber-200
+                            {% elif message.tags == 'success' %}bg-emerald-50 text-emerald-800 border-emerald-200
+                            {% else %}bg-blue-50 text-blue-800 border-blue-200{% endif %}">
+                            
+                            {% if message.tags == 'error' %}
+                                <svg class="w-5 h-5 text-red-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            {% elif message.tags == 'warning' %}
+                                <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            {% elif message.tags == 'success' %}
+                                <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            {% else %}
+                                <svg class="w-5 h-5 text-steel-azure shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            {% endif %}
+                            
+                            <div class="text-sm font-medium flex-1">{{ message }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <main class="flex-grow">
+{% else %}
+    <!-- STANDARD TOP NAVBAR WRAPPER START -->
+    <header class="bg-steel-azure text-white shadow-lg sticky top-0 z-50">
         <!-- Top Institutional Strip -->
-        <div class="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 border-b border-blue-800">
+        <div class="bg-onyx text-slate-300 text-xs py-1.5 px-4 border-b border-[#121011]">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
                 <div class="flex items-center space-x-2">
-                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    <img src="{% static 'buk_logo.jpeg' %}" alt="BUK Crest" class="w-4 h-4 rounded-sm object-contain bg-white">
                     <span class="font-semibold tracking-wide">BAYERO UNIVERSITY KANO</span>
                     <span class="text-slate-500">|</span>
                     <span>Department of Software Engineering</span>
@@ -57,37 +176,28 @@
                 <!-- Logo & Brand -->
                 <div class="flex items-center space-x-3">
                     <a href="{% url 'home' %}" class="flex items-center space-x-3 group">
-                        <div class="w-10 h-10 rounded-lg bg-amber-500 text-blue-950 flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 transition-transform">
-                            BUK
-                        </div>
+                        <img src="{% static 'buk_logo.jpeg' %}" alt="BUK Logo" class="w-10 h-10 rounded-lg object-contain bg-white p-0.5 shadow group-hover:scale-105 transition-transform">
                         <div>
                             <span class="text-lg font-extrabold tracking-tight text-white block leading-none">BUK-SIWES QOVRS</span>
-                            <span class="text-xs text-amber-400 font-medium">Quality Assurance Pipeline</span>
+                            <span class="text-xs text-sky-blue font-medium">Quality Assurance Pipeline</span>
                         </div>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                    <a href="{% url 'home' %}" class="hover:text-amber-400 transition-colors py-2">Home</a>
-                    <a href="{% url 'approved_directory' %}" class="hover:text-amber-400 transition-colors py-2 flex items-center space-x-1">
+                    <a href="{% url 'home' %}" class="hover:text-sky-blue transition-colors py-2">Home</a>
+                    <a href="{% url 'approved_directory' %}" class="hover:text-sky-blue transition-colors py-2 flex items-center space-x-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         <span>Approved Directory</span>
                     </a>
-                    <a href="{% url 'organization_submit' %}" class="hover:text-amber-400 transition-colors py-2">Submit Organization</a>
+                    <a href="{% url 'organization_submit' %}" class="hover:text-sky-blue transition-colors py-2">Submit Organization</a>
 
                     {% if user.is_authenticated %}
-                        {% if user.is_coordinator or user.is_superuser %}
-                            <a href="{% url 'coordinator_dashboard' %}" class="text-amber-400 hover:text-amber-300 font-semibold py-2 flex items-center space-x-1">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                <span>Coordinator Center</span>
-                            </a>
-                            <a href="{% url 'coordinator_flagged_reviews' %}" class="hover:text-amber-400 transition-colors py-2">Flagged Reviews</a>
-                            <a href="{% url 'blacklist_registry' %}" class="hover:text-red-400 transition-colors py-2">Blacklist Registry</a>
-                        {% elif user.is_supervisor %}
-                            <a href="{% url 'supervisor_assessments' %}" class="text-amber-400 hover:text-amber-300 font-semibold py-2">Supervisor Portal</a>
+                        {% if user.is_supervisor %}
+                            <a href="{% url 'supervisor_assessments' %}" class="text-sky-blue hover:text-white font-semibold py-2">Supervisor Portal</a>
                         {% elif user.is_student %}
-                            <a href="{% url 'student_placements' %}" class="text-amber-400 hover:text-amber-300 font-semibold py-2">My Placements</a>
+                            <a href="{% url 'student_placements' %}" class="text-sky-blue hover:text-white font-semibold py-2">My Placements</a>
                         {% endif %}
                     {% endif %}
                 </div>
@@ -95,21 +205,21 @@
                 <!-- User Account Actions -->
                 <div class="flex items-center space-x-4">
                     {% if user.is_authenticated %}
-                        <div class="flex items-center space-x-3 bg-blue-950/60 px-3 py-1.5 rounded-lg border border-blue-700/50">
-                            <div class="w-8 h-8 rounded-full bg-amber-500 text-blue-950 flex items-center justify-center font-bold text-xs">
+                        <div class="flex items-center space-x-3 bg-[#063768] px-3 py-1.5 rounded-lg border border-sky-blue/30">
+                            <div class="w-8 h-8 rounded-full bg-sky-blue text-steel-azure flex items-center justify-center font-bold text-xs">
                                 {{ user.username|slice:":2"|upper }}
                             </div>
                             <div class="hidden lg:block text-left">
                                 <span class="text-xs font-semibold text-white block">{{ user.get_full_name|default:user.username }}</span>
-                                <span class="text-[10px] text-amber-400 font-medium block">{{ user.get_role_display }}</span>
+                                <span class="text-[10px] text-sky-blue font-medium block">{{ user.get_role_display }}</span>
                             </div>
                             <a href="{% url 'logout' %}" class="ml-2 text-slate-300 hover:text-white p-1 rounded transition-colors" title="Sign Out">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                             </a>
                         </div>
                     {% else %}
-                        <a href="{% url 'login' %}" class="text-sm font-semibold text-white hover:text-amber-400 px-3 py-2 transition-colors">Sign In</a>
-                        <a href="{% url 'register_student' %}" class="text-sm font-semibold bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-lg shadow transition-colors">Student Signup</a>
+                        <a href="{% url 'login' %}" class="text-sm font-semibold text-white hover:text-sky-blue px-3 py-2 transition-colors">Sign In</a>
+                        <a href="{% url 'register_student' %}" class="text-sm font-semibold bg-sky-blue hover:bg-sky-300 text-steel-azure px-4 py-2 rounded-lg shadow font-bold transition-colors">Student Signup</a>
                     {% endif %}
                 </div>
             </div>
@@ -118,7 +228,7 @@
 
     <!-- Global Messages Container -->
     {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 w-full">
             {% for message in messages %}
                 <div class="p-4 rounded-xl shadow-sm border mb-3 flex items-start space-x-3 
                     {% if message.tags == 'error' %}bg-red-50 text-red-800 border-red-200
@@ -133,7 +243,7 @@
                     {% elif message.tags == 'success' %}
                         <svg class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     {% else %}
-                        <svg class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-5 h-5 text-steel-azure shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     {% endif %}
                     
                     <div class="text-sm font-medium flex-1">{{ message }}</div>
@@ -142,18 +252,25 @@
         </div>
     {% endif %}
 
-    <!-- Main Content Area -->
     <main class="flex-grow">
+{% endif %}
+
+        <!-- SINGLE BLOCK CONTENT DECLARATION FOR ALL TEMPLATES -->
         {% block content %}{% endblock %}
+
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 text-sm mt-auto border-t border-slate-800">
+{% if user.is_authenticated and user.is_coordinator %}
+        </div>
+    </div>
+{% else %}
+    <!-- Footer in Onyx with BUK Logo -->
+    <footer class="bg-onyx text-slate-400 text-sm mt-auto border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div class="md:col-span-2">
                     <div class="flex items-center space-x-3 mb-3">
-                        <div class="w-8 h-8 rounded bg-amber-500 text-blue-950 font-extrabold flex items-center justify-center text-sm">BUK</div>
+                        <img src="{% static 'buk_logo.jpeg' %}" alt="BUK Crest" class="w-8 h-8 rounded object-contain bg-white p-0.5">
                         <span class="text-white font-bold text-base">BUK-SIWES QOVRS</span>
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed pr-6">
@@ -163,9 +280,9 @@
                 <div>
                     <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">Quick Navigation</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="{% url 'approved_directory' %}" class="hover:text-amber-400 transition-colors">Approved Directory</a></li>
-                        <li><a href="{% url 'organization_submit' %}" class="hover:text-amber-400 transition-colors">Submit Host Organization</a></li>
-                        <li><a href="{% url 'login' %}" class="hover:text-amber-400 transition-colors">Portal Login</a></li>
+                        <li><a href="{% url 'approved_directory' %}" class="hover:text-sky-blue transition-colors">Approved Directory</a></li>
+                        <li><a href="{% url 'organization_submit' %}" class="hover:text-sky-blue transition-colors">Submit Host Organization</a></li>
+                        <li><a href="{% url 'login' %}" class="hover:text-sky-blue transition-colors">Portal Login</a></li>
                     </ul>
                 </div>
                 <div>
@@ -182,6 +299,7 @@
             </div>
         </div>
     </footer>
+{% endif %}
 
 </body>
 </html>

@@ -41,14 +41,19 @@ class PlacementRequest(models.Model):
 
     def clean(self):
         super().clean()
-        if self.organization:
-            if self.organization.status == Organization.Status.BLACKLISTED:
-                raise ValidationError("Placement requests cannot be submitted to a blacklisted organization.")
-            if self.organization.status not in [Organization.Status.APPROVED, Organization.Status.ACTIVE, Organization.Status.REVIEWED]:
-                raise ValidationError("Placement requests can only be submitted to approved host organizations.")
+        try:
+            if hasattr(self, 'organization_id') and self.organization_id and self.organization:
+                if self.organization.status == Organization.Status.BLACKLISTED:
+                    raise ValidationError("Placement requests cannot be submitted to a blacklisted organization.")
+                if self.organization.status not in [Organization.Status.APPROVED, Organization.Status.ACTIVE, Organization.Status.REVIEWED]:
+                    raise ValidationError("Placement requests can only be submitted to approved host organizations.")
+        except Exception:
+            pass
 
     def __str__(self):
-        return f"{self.student.registration_number} -> {self.organization.name} ({self.get_status_display()})"
+        org_name = getattr(self, 'organization', None)
+        student_reg = getattr(self, 'student', None)
+        return f"{student_reg} -> {org_name} ({self.get_status_display()})"
 
 
 class Placement(models.Model):

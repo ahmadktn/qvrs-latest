@@ -29,15 +29,18 @@ def student_request_placement_view(request, org_id):
         return redirect('student_placements')
 
     form = PlacementRequestForm(request.POST or None, organization=org)
-    if request.method == 'POST' and form.is_valid():
-        placement_req = form.save(commit=False)
-        placement_req.student = student
-        placement_req.organization = org
-        placement_req.status = PlacementRequest.Status.PENDING
-        placement_req.save()
+    if request.method == 'POST':
+        # Bind student and organization instance before full_clean() validation
+        form.instance.student = student
+        form.instance.organization = org
+        form.instance.status = PlacementRequest.Status.PENDING
 
-        messages.success(request, f"Your placement request to '{org.name}' has been submitted for SIWES Coordinator review!")
-        return redirect('student_placements')
+        if form.is_valid():
+            placement_req = form.save()
+            messages.success(request, f"Your placement request to '{org.name}' has been submitted for SIWES Coordinator review!")
+            return redirect('student_placements')
+        else:
+            messages.error(request, "Please correct the errors in the placement request form below.")
 
     return render(request, 'placements/request_form.html', {
         'org': org,
