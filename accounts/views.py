@@ -42,6 +42,50 @@ def login_view(request):
     return render(request, 'accounts/login.html', {'form': form})
 
 
+def register_hub_view(request):
+    role = request.GET.get('role', 'student')
+    if role == 'supervisor':
+        return redirect('register_supervisor')
+    return redirect('register_student')
+
+
+def supervisor_register_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
+    form = SupervisorCreationForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            full_name = form.cleaned_data['full_name'].strip()
+            email = form.cleaned_data['email'].strip().lower()
+            state = form.cleaned_data['state'].strip()
+            password = form.cleaned_data['password']
+
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=full_name,
+                last_name='',
+                state=state,
+                role=User.Role.SUPERVISOR,
+                is_staff=True
+            )
+            messages.success(request, f"Academic Supervisor account registered successfully! You may now sign in with your email ({email}).")
+            return redirect('login')
+        else:
+            detailed_errors = []
+            for field, errors in form.errors.items():
+                for err in errors:
+                    field_name = form.fields[field].label if field in form.fields and form.fields[field].label else field.replace('_', ' ').title()
+                    detailed_errors.append(f"{field_name}: {err}")
+            
+            error_message = "Registration Failed: " + "; ".join(detailed_errors)
+            messages.error(request, error_message)
+
+    return render(request, 'accounts/register_supervisor.html', {'form': form})
+
+
 def student_register_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')

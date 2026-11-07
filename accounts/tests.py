@@ -100,7 +100,7 @@ class RequirementsVerificationTests(TestCase):
         self.assertContains(detail_res, 'Aliyu Haruna')
         self.assertContains(detail_res, 'CST/20/SWE/00001')
         self.assertContains(detail_res, 'Kano Software Lab')
-        self.assertContains(detail_res, '✓ In Supervisor\'s State')
+        self.assertContains(detail_res, 'In Supervisor\'s State')
         self.assertContains(detail_res, 'placementDetailsModal')
 
         # Unassign placement
@@ -175,7 +175,7 @@ class RequirementsVerificationTests(TestCase):
         })
         self.assertEqual(login_res2.status_code, 302)
 
-    # 2b. Supervisor creation with full_name, email, state, password
+    # 2b. Supervisor creation by coordinator
     def test_supervisor_creation(self):
         self.client.force_login(self.coord)
         res = self.client.post(reverse('coordinator_create_supervisor'), {
@@ -190,6 +190,42 @@ class RequirementsVerificationTests(TestCase):
         self.assertEqual(new_sup.first_name, 'Dr. Mansur Babangida')
         self.assertEqual(new_sup.state, 'Lagos')
         self.assertEqual(new_sup.role, User.Role.SUPERVISOR)
+
+    # 2c. Public Supervisor Registration on registration page
+    def test_public_supervisor_registration(self):
+        # Registration page has link/tab to supervisor signup
+        student_page = self.client.get(reverse('register_student'))
+        self.assertContains(student_page, reverse('register_supervisor'))
+
+        # GET supervisor registration page
+        res_get = self.client.get(reverse('register_supervisor'))
+        self.assertEqual(res_get.status_code, 200)
+        self.assertContains(res_get, 'Academic Supervisor Registration')
+
+        # POST valid supervisor registration
+        res_post = self.client.post(reverse('register_supervisor'), {
+            'full_name': 'Dr. Jamila Bello',
+            'email': 'jamila.swe@buk.edu.ng',
+            'state': 'Kano',
+            'password': 'SupervisorSecret456!',
+            'confirm_password': 'SupervisorSecret456!',
+        })
+        self.assertEqual(res_post.status_code, 302)
+        self.assertIn(reverse('login'), res_post.url)
+
+        # Verify supervisor user created with role SUPERVISOR
+        created_sup = User.objects.get(email='jamila.swe@buk.edu.ng')
+        self.assertEqual(created_sup.first_name, 'Dr. Jamila Bello')
+        self.assertEqual(created_sup.state, 'Kano')
+        self.assertEqual(created_sup.role, User.Role.SUPERVISOR)
+        self.assertTrue(created_sup.is_staff)
+
+        # Login with newly created supervisor credentials
+        login_res = self.client.post(reverse('login'), {
+            'login_id': 'jamila.swe@buk.edu.ng',
+            'password': 'SupervisorSecret456!',
+        })
+        self.assertEqual(login_res.status_code, 302)
 
     # 3. Prevent duplicate organization registration
     def test_duplicate_organization_registration_prevented(self):

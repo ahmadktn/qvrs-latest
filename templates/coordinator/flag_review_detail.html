@@ -18,7 +18,7 @@
                 <span>Automated Low-Rating Flag Triggered</span>
             </div>
             <h1 class="text-2xl font-extrabold">{{ org.name }}</h1>
-            <p class="text-xs text-red-200 mt-1">Triggered Rating: <strong class="text-amber-400 text-sm font-black">★ {{ review.triggered_by_rating }} / 5.00</strong> (Fell below 3.00 threshold)</p>
+            <p class="text-xs text-red-200 mt-1">Triggered Rating: <strong class="text-amber-400 text-sm font-black inline-flex items-center gap-1"><svg class="w-4 h-4 text-amber-400 fill-amber-400 shrink-0" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>{{ review.triggered_by_rating }} / 5.00</strong> (Fell below 3.00 threshold)</p>
         </div>
         <span class="px-3 py-1 bg-red-800 border border-red-600 text-white font-extrabold rounded-full text-xs uppercase">
             {{ review.get_status_display }}
@@ -32,7 +32,7 @@
                 <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2 mb-4">Cumulative Quality Performance</h3>
 
                 <div class="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
-                    <div><span class="text-slate-500 block">Overall Average:</span> <strong class="text-red-600 font-black text-base">★ {{ rating_summary.average_rating }}</strong></div>
+                    <div><span class="text-slate-500 block">Overall Average:</span> <strong class="text-red-600 font-black text-base inline-flex items-center gap-1"><svg class="w-4 h-4 text-red-500 fill-red-500 shrink-0" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>{{ rating_summary.average_rating }}</strong></div>
                     <div><span class="text-slate-500 block">Total Evaluations:</span> <strong class="text-slate-800 text-sm">{{ rating_summary.total_assessments }}</strong></div>
                     <div><span class="text-slate-500 block">Skill Relevance:</span> <strong>{{ rating_summary.avg_skill_relevance }} / 5.0</strong></div>
                     <div><span class="text-slate-500 block">Supervision Adequacy:</span> <strong>{{ rating_summary.avg_supervision_adequacy }} / 5.0</strong></div>
@@ -44,7 +44,10 @@
                         <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 text-xs space-y-2">
                             <div class="flex justify-between items-center border-b border-slate-200 pb-2">
                                 <span class="font-bold text-slate-900">Evaluator: {{ ass.academic_supervisor.get_full_name }}</span>
-                                <span class="font-black text-amber-600">★ {{ ass.overall_rating }} Stars</span>
+                                <span class="font-black text-amber-600 inline-flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-amber-500 fill-amber-400 shrink-0" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                    {{ ass.overall_rating }} Stars
+                                </span>
                             </div>
                             <div>
                                 <span class="text-slate-500 block font-semibold">Observed Student Tasks:</span>
