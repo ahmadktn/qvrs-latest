@@ -20,14 +20,25 @@
                     Bridging classroom theory with verified industry training. Ensuring curriculum-relevant placements through proactive host organization vetting and post-placement supervisor evaluation.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    <a href="{% url 'approved_directory' %}" class="inline-flex items-center space-x-2 bg-sky-blue hover:bg-sky-300 text-steel-azure font-extrabold px-6 py-3.5 rounded-xl shadow-lg transition-all text-sm">
-                        <svg class="w-5 h-5 text-steel-azure" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <span>Browse Approved Organizations</span>
-                    </a>
-                    <a href="{% url 'organization_submit' %}" class="inline-flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3.5 rounded-xl border border-white/20 transition-all text-sm">
-                        <svg class="w-5 h-5 text-sky-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        <span>Register / Submit Organization</span>
-                    </a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'approved_directory' %}" class="inline-flex items-center space-x-2 bg-sky-blue hover:bg-sky-300 text-steel-azure font-extrabold px-6 py-3.5 rounded-xl shadow-lg transition-all text-sm">
+                            <svg class="w-5 h-5 text-steel-azure" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <span>Browse Approved Organizations</span>
+                        </a>
+                        <a href="{% url 'organization_submit' %}" class="inline-flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3.5 rounded-xl border border-white/20 transition-all text-sm">
+                            <svg class="w-5 h-5 text-sky-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            <span>Register / Submit Organization</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="inline-flex items-center space-x-2 bg-sky-blue hover:bg-sky-300 text-steel-azure font-extrabold px-6 py-3.5 rounded-xl shadow-lg transition-all text-sm">
+                            <svg class="w-5 h-5 text-steel-azure" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                            <span>Sign In to Portal</span>
+                        </a>
+                        <a href="{% url 'register_student' %}" class="inline-flex items-center space-x-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3.5 rounded-xl border border-white/20 transition-all text-sm">
+                            <svg class="w-5 h-5 text-sky-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                            <span>Register Student Profile</span>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="hidden lg:flex lg:col-span-4 justify-center items-center">
@@ -107,7 +118,7 @@
 </section>
 
 <!-- Featured Approved Organizations -->
-{% if featured_orgs %}
+{% if user.is_authenticated and featured_orgs %}
 <section class="py-12 bg-slate-100/70 border-t border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-end mb-8">

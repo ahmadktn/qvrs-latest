@@ -37,12 +37,15 @@ class Command(BaseCommand):
             username='dr_usman',
             defaults={
                 'email': 'usman.swe@buk.edu.ng',
-                'first_name': 'Dr. Usman',
-                'last_name': 'Suleiman',
+                'first_name': 'Dr. Usman Suleiman',
+                'last_name': '',
+                'state': 'Kano',
                 'role': User.Role.SUPERVISOR,
                 'is_staff': True,
             }
         )
+        sup1.state = 'Kano'
+        sup1.first_name = 'Dr. Usman Suleiman'
         sup1.set_password('password123')
         sup1.save()
 
@@ -50,12 +53,15 @@ class Command(BaseCommand):
             username='dr_aminu',
             defaults={
                 'email': 'aminu.swe@buk.edu.ng',
-                'first_name': 'Dr. Aminu',
-                'last_name': 'Bala',
+                'first_name': 'Dr. Aminu Bala',
+                'last_name': '',
+                'state': 'Kaduna',
                 'role': User.Role.SUPERVISOR,
                 'is_staff': True,
             }
         )
+        sup2.state = 'Kaduna'
+        sup2.first_name = 'Dr. Aminu Bala'
         sup2.set_password('password123')
         sup2.save()
 

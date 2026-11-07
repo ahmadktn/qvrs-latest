@@ -22,9 +22,9 @@
             {% endif %}
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Username / Reg Number</label>
-                {{ form.username }}
-                {% if form.username.errors %}<p class="text-xs text-red-600 mt-1 font-semibold">{{ form.username.errors.0 }}</p>{% endif %}
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">BUK Email Address / Registration Number</label>
+                {{ form.login_id }}
+                {% if form.login_id.errors %}<p class="text-xs text-red-600 mt-1 font-semibold">{{ form.login_id.errors.0 }}</p>{% endif %}
             </div>
 
             <div>

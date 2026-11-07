@@ -14,6 +14,7 @@ class User(AbstractUser):
         default=Role.STUDENT
     )
     phone_number = models.CharField(max_length=20, blank=True)
+    state = models.CharField(max_length=100, blank=True, default='', help_text="Supervisory / Placement State")
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property

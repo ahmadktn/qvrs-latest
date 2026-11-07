@@ -7,7 +7,7 @@ from accounts.models import User
 class PlacementRequestForm(forms.ModelForm):
     class Meta:
         model = PlacementRequest
-        fields = ['training_opportunity', 'proposed_start_date', 'proposed_end_date', 'cover_note']
+        fields = ['proposed_start_date', 'proposed_end_date', 'cover_note']
         widgets = {
             'proposed_start_date': forms.DateInput(attrs={'type': 'date', 'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm'}),
             'proposed_end_date': forms.DateInput(attrs={'type': 'date', 'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm'}),
@@ -16,9 +16,6 @@ class PlacementRequestForm(forms.ModelForm):
 
     def __init__(self, *args, organization=None, **kwargs):
         super().__init__(*args, **kwargs)
-        if organization:
-            self.fields['training_opportunity'].queryset = TrainingOpportunity.objects.filter(organization=organization)
-            self.fields['training_opportunity'].widget.attrs.update({'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm bg-white'})
 
 
 class CoordinatorPlacementProcessForm(forms.Form):

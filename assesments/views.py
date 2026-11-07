@@ -14,21 +14,37 @@ from assesments.services import LowRatingDetectorService, RatingAggregationServi
 def supervisor_assessments_list_view(request):
     supervisor = request.user
     
-    # Placements assigned to supervisor that are COMPLETED but not yet assessed
+    # Active ongoing student placements assigned to supervisor
+    active_placements = Placement.objects.filter(
+        academic_supervisor=supervisor,
+        status=Placement.Status.ONGOING
+    ).select_related('student__user', 'organization', 'placement_request').order_by('-start_date')
+
+    # Completed placements awaiting supervisor assessment
     pending_assessments = Placement.objects.filter(
         academic_supervisor=supervisor,
         status=Placement.Status.COMPLETED,
         assessment__isnull=True
-    ).select_related('student', 'organization', 'student__user').order_by('-completion_date')
+    ).select_related('student', 'organization', 'student__user', 'placement_request').order_by('-completion_date')
 
     # Already submitted assessments by supervisor
     completed_assessments = SupervisorAssessment.objects.filter(
         academic_supervisor=supervisor
     ).select_related('placement', 'organization', 'placement__student', 'placement__student__user').order_by('-assessed_at')
 
+    stats = {
+        'total_assigned': active_placements.count() + pending_assessments.count() + completed_assessments.count(),
+        'active_count': active_placements.count(),
+        'pending_count': pending_assessments.count(),
+        'completed_count': completed_assessments.count(),
+    }
+
     return render(request, 'supervisor/assessment_list.html', {
+        'supervisor': supervisor,
+        'active_placements': active_placements,
         'pending_assessments': pending_assessments,
         'completed_assessments': completed_assessments,
+        'stats': stats,
     })
 
 

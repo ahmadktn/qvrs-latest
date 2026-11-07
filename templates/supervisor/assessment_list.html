@@ -1,25 +1,108 @@
 {% extends 'base.html' %}
 
-{% block title %}Academic Supervisor Portal - Stage 8{% endblock %}
+{% block title %}Academic Supervisor Command Center - BUK-SIWES QOVRS{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 space-y-8">
 
-    <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mb-8 flex justify-between items-center">
-        <div>
-            <span class="text-xs text-amber-600 font-bold uppercase tracking-wider block">Stage 8 Post-Placement Evaluation</span>
-            <h1 class="text-2xl font-bold text-slate-900">Academic Supervisor Assessment Portal</h1>
-            <p class="text-xs text-slate-500 mt-1">Supervising Faculty: {{ user.get_full_name }}</p>
+    <!-- Top Executive Header Banner -->
+    <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="flex items-start space-x-4">
+            <div class="w-14 h-14 rounded-2xl bg-amber-500 text-onyx flex items-center justify-center font-black text-xl shrink-0 shadow-md">
+                {{ user.first_name|slice:":2"|upper|default:user.username|slice:":2"|upper }}
+            </div>
+            <div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <h1 class="text-2xl font-bold text-slate-900">{{ user.first_name|default:user.username }}</h1>
+                    {% if user.state %}
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                            {{ user.state }} State
+                        </span>
+                    {% else %}
+                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                            General Jurisdiction
+                        </span>
+                    {% endif %}
+                </div>
+                <p class="text-xs text-slate-500 mt-1">
+                    Faculty Quality Assurance Pipeline &bull; Post-Placement Host Organization Evaluation &bull; Department of Software Engineering
+                </p>
+            </div>
         </div>
-        <span class="px-3 py-1 bg-amber-100 text-amber-900 border border-amber-200 rounded-full text-xs font-bold">
-            {{ pending_assessments.count }} Pending Evaluation(s)
-        </span>
+
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'approved_directory' %}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors">
+                Browse Directory
+            </a>
+            <a href="{% url 'organization_submit' %}" class="px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shadow transition-colors flex items-center space-x-1">
+                <span>+ Submit Firm</span>
+            </a>
+        </div>
     </div>
 
-    <!-- Pending Assessments Queue -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-10">
-        <div class="p-6 border-b border-slate-100">
-            <h2 class="text-base font-bold text-slate-900">Completed Placements Awaiting Supervisor Assessment</h2>
+   
+    <!-- 4 High-Level KPI Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Active Students in Field -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center shrink-0 border border-blue-100">
+                <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            </div>
+            <div>
+                <span class="text-2xl font-black text-slate-900 block leading-tight">{{ stats.active_count }}</span>
+                <span class="text-xs text-slate-500 font-medium">Active Students in Field</span>
+            </div>
+        </div>
+
+        <!-- Pending QA Evaluations -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center shrink-0 border border-amber-100">
+                <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <span class="text-2xl font-black text-amber-600 block leading-tight">{{ stats.pending_count }}</span>
+                <span class="text-xs text-slate-500 font-medium">Pending QA Evaluations</span>
+            </div>
+        </div>
+
+        <!-- Completed Assessments -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center shrink-0 border border-emerald-100">
+                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <span class="text-2xl font-black text-emerald-600 block leading-tight">{{ stats.completed_count }}</span>
+                <span class="text-xs text-slate-500 font-medium">Evaluations Submitted</span>
+            </div>
+        </div>
+
+        <!-- Jurisdiction State -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-50 text-slate-700 flex items-center justify-center shrink-0 border border-slate-200">
+                <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </div>
+            <div>
+                <span class="text-base font-bold text-slate-900 block truncate">{{ user.state|default:"All States" }}</span>
+                <span class="text-xs text-slate-500 font-medium">Supervision State Zone</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 1: PENDING POST-PLACEMENT EVALUATIONS (ACTION REQUIRED) -->
+    <div class="bg-white rounded-2xl border {% if pending_assessments %}border-amber-300 ring-2 ring-amber-200/50{% else %}border-slate-200{% endif %} shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 {% if pending_assessments %}bg-amber-50/50{% endif %}">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0 font-bold text-xs">
+                    !
+                </div>
+                <div>
+                    <h2 class="text-base font-bold text-slate-900">Completed Placements Awaiting Supervisor Assessment</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Mandatory 4-dimension departmental evaluation required before closing student record.</p>
+                </div>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold {% if pending_assessments %}bg-amber-100 text-amber-900 border border-amber-300{% else %}bg-slate-100 text-slate-600{% endif %}">
+                {{ pending_assessments.count }} Action Required
+            </span>
         </div>
 
         {% if pending_assessments %}
@@ -27,24 +110,34 @@
                 <table class="w-full text-left text-xs text-slate-700">
                     <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
                         <tr>
-                            <th class="px-6 py-3.5">Student</th>
-                            <th class="px-6 py-3.5">Host Organization</th>
-                            <th class="px-6 py-3.5">Completion Date</th>
-                            <th class="px-6 py-3.5 text-right">Action</th>
+                            <th class="px-6 py-4">Student Details</th>
+                            <th class="px-6 py-4">Host Organization</th>
+                            <th class="px-6 py-4">Location</th>
+                            <th class="px-6 py-4">Completion Date</th>
+                            <th class="px-6 py-4 text-right">Evaluation Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         {% for plc in pending_assessments %}
-                            <tr class="hover:bg-slate-50 transition-colors">
+                            <tr class="hover:bg-amber-50/30 transition-colors">
                                 <td class="px-6 py-4 font-bold text-slate-900">
-                                    {{ plc.student.user.get_full_name }}
-                                    <span class="block text-[10px] text-slate-400 font-medium">{{ plc.student.registration_number }}</span>
+                                    {{ plc.student.user.first_name|default:plc.student.user.username }}
+                                    <span class="block text-[11px] font-mono text-blue-900 font-semibold">{{ plc.student.registration_number }}</span>
                                 </td>
-                                <td class="px-6 py-4 font-semibold text-blue-900">{{ plc.organization.name }}</td>
-                                <td class="px-6 py-4 text-slate-500">{{ plc.completion_date|date:"M d, Y" }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="font-bold text-slate-900 block">{{ plc.organization.name }}</span>
+                                    <span class="text-[10px] text-slate-500">{{ plc.organization.industry_sector }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">
+                                    {{ plc.organization.city }}, {{ plc.organization.state }}
+                                </td>
+                                <td class="px-6 py-4 text-slate-500">
+                                    {{ plc.completion_date|date:"M d, Y"|default:"Recently Completed" }}
+                                </td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{% url 'submit_supervisor_assessment' plc.id %}" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow transition-colors">
-                                        Fill Assessment Form &rarr;
+                                    <a href="{% url 'submit_supervisor_assessment' plc.id %}" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow transition-colors inline-flex items-center space-x-1.5 text-xs">
+                                        <span>Complete Assessment</span>
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                     </a>
                                 </td>
                             </tr>
@@ -54,15 +147,121 @@
             </div>
         {% else %}
             <div class="p-8 text-center text-xs text-slate-500">
-                No completed student placements currently pending your assessment.
+                <svg class="w-8 h-8 text-emerald-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="font-bold text-slate-700 block">All completed placements have been evaluated!</span>
+                <span>When students finish their active placements below, they will appear here for quality assessment.</span>
             </div>
         {% endif %}
     </div>
 
-    <!-- Submitted Assessments History -->
+    <!-- SECTION 2: ACTIVE SUPERVISED STUDENTS IN FIELD -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-6 border-b border-slate-100">
-            <h2 class="text-base font-bold text-slate-900">Submitted Assessments History</h2>
+        <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+                <h2 class="text-base font-bold text-slate-900">Active Supervised Students in Field</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Students currently undergoing on-site training assigned to your academic supervision.</p>
+            </div>
+            <span class="px-3 py-1 bg-blue-50 text-blue-900 border border-blue-200 rounded-full text-xs font-bold self-start sm:self-auto">
+                {{ active_placements.count }} Active Placements
+            </span>
+        </div>
+
+        {% if active_placements %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-4">Student</th>
+                            <th class="px-6 py-4">Host Organization</th>
+                            <th class="px-6 py-4">State Match</th>
+                            <th class="px-6 py-4">SIWES Duration</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">Supervisory Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for plc in active_placements %}
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="px-6 py-4 font-bold text-slate-900">
+                                    {{ plc.student.user.first_name|default:plc.student.user.username }}
+                                    <span class="block text-[11px] font-mono text-blue-900 font-semibold">{{ plc.student.registration_number }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="font-bold text-slate-900 block">{{ plc.organization.name }}</span>
+                                    <span class="text-[10px] text-slate-500">{{ plc.organization.city }}, {{ plc.organization.state }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if user.state and plc.organization.state|lower == user.state|lower %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                            ✓ In State ({{ user.state }})
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                                            {{ plc.organization.state }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-slate-500">
+                                    {{ plc.start_date|date:"M d, Y" }} &ndash; {{ plc.end_date|date:"M d, Y" }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-900">
+                                        Ongoing
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="inline-flex items-center space-x-2">
+                                        <button type="button" 
+                                            onclick="openPlacementModal({
+                                                studentName: '{{ plc.student.user.first_name|default:plc.student.user.username|escapejs }}',
+                                                regNumber: '{{ plc.student.registration_number|escapejs }}',
+                                                faculty: '{{ plc.student.faculty|default:'Faculty of Computing'|escapejs }}',
+                                                department: '{{ plc.student.department|default:'Software Engineering'|escapejs }}',
+                                                orgName: '{{ plc.organization.name|escapejs }}',
+                                                orgSector: '{{ plc.organization.industry_sector|escapejs }}',
+                                                orgAddress: '{{ plc.organization.address|escapejs }}',
+                                                orgCityState: '{{ plc.organization.city|escapejs }}, {{ plc.organization.state|escapejs }}',
+                                                startDate: '{{ plc.start_date|date:'M d, Y' }}',
+                                                endDate: '{{ plc.end_date|date:'M d, Y' }}',
+                                                status: '{{ plc.get_status_display|escapejs }}',
+                                                coverNote: '{{ plc.placement_request.cover_note|default:'No cover note provided.'|escapejs }}',
+                                                contactName: '{{ plc.organization.contact_person_name|escapejs }}',
+                                                contactEmail: '{{ plc.organization.contact_person_email|escapejs }}',
+                                                contactPhone: '{{ plc.organization.contact_person_phone|escapejs }}'
+                                            })" 
+                                            class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
+                                            View Details
+                                        </button>
+                                        <form method="post" action="{% url 'mark_placement_complete' plc.id %}" onsubmit="return confirm('Confirm concluding placement for {{ plc.student.registration_number }}? This will unlock post-placement assessment.');" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
+                                                Conclude & Evaluate
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="p-8 text-center text-xs text-slate-500">
+                No active student placements assigned to you currently. The SIWES Coordinator assigns ongoing placements by state.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- SECTION 3: SUBMITTED EVALUATIONS & QUALITY RECORDS -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+            <div>
+                <h2 class="text-base font-bold text-slate-900">Completed Quality Assessments History</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Archive of host organization quality assessments recorded by you.</p>
+            </div>
+            <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-bold">
+                {{ completed_assessments.count }} Total Evaluations
+            </span>
         </div>
 
         {% if completed_assessments %}
@@ -70,19 +269,45 @@
                 <table class="w-full text-left text-xs text-slate-700">
                     <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
                         <tr>
-                            <th class="px-6 py-3.5">Host Organization</th>
-                            <th class="px-6 py-3.5">Student</th>
-                            <th class="px-6 py-3.5">Submitted Rating</th>
-                            <th class="px-6 py-3.5">Assessment Date</th>
+                            <th class="px-6 py-4">Host Organization</th>
+                            <th class="px-6 py-4">Student</th>
+                            <th class="px-6 py-4">Overall Score</th>
+                            <th class="px-6 py-4">Recommended</th>
+                            <th class="px-6 py-4">Assessment Date</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         {% for ass in completed_assessments %}
                             <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-bold text-blue-900">{{ ass.organization.name }}</td>
-                                <td class="px-6 py-4">{{ ass.placement.student.user.get_full_name }} ({{ ass.placement.student.registration_number }})</td>
-                                <td class="px-6 py-4 font-bold text-amber-600">★ {{ ass.overall_rating }} / 5.00</td>
-                                <td class="px-6 py-4 text-slate-500">{{ ass.assessed_at|date:"M d, Y" }}</td>
+                                <td class="px-6 py-4 font-bold text-blue-900">
+                                    {{ ass.organization.name }}
+                                    <span class="block text-[10px] text-slate-400 font-normal">{{ ass.organization.city }}, {{ ass.organization.state }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="font-bold text-slate-900">{{ ass.placement.student.user.first_name|default:ass.placement.student.user.username }}</span>
+                                    <span class="block text-[11px] font-mono text-slate-500">{{ ass.placement.student.registration_number }}</span>
+                                </td>
+                                <td class="px-6 py-4 font-bold text-amber-600">
+                                    ★ {{ ass.overall_rating|default:"0.00" }} / 5.00
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if ass.q4_recommend_future >= 4 %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                            ✓ Highly Recommended
+                                        </span>
+                                    {% elif ass.q4_recommend_future >= 3 %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">
+                                            Satisfactory
+                                        </span>
+                                    {% else %}
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-800">
+                                            Not Recommended
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-slate-500">
+                                    {{ ass.assessed_at|date:"M d, Y" }}
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -96,4 +321,132 @@
     </div>
 
 </div>
+
+<!-- PLACEMENT DETAILS MODAL -->
+<div id="placementDetailsModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all max-h-[90vh] flex flex-col">
+        <!-- Header -->
+        <div class="bg-steel-azure p-6 text-white flex justify-between items-start shrink-0">
+            <div>
+                <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-sky-200 text-steel-azure uppercase tracking-wider block w-fit mb-1.5">
+                    Field Supervision Record
+                </span>
+                <h3 id="modalStudentName" class="text-xl font-bold"></h3>
+                <p id="modalRegNumber" class="text-xs text-sky-200 font-mono mt-0.5"></p>
+            </div>
+            <button type="button" onclick="closePlacementModal()" class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-5 overflow-y-auto text-xs">
+            <!-- Institutional Metadata -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 gap-4">
+                <div>
+                    <span class="text-slate-400 block uppercase tracking-wider text-[10px] font-bold">Faculty</span>
+                    <span id="modalFaculty" class="font-bold text-slate-800 text-sm"></span>
+                </div>
+                <div>
+                    <span class="text-slate-400 block uppercase tracking-wider text-[10px] font-bold">Department</span>
+                    <span id="modalDepartment" class="font-bold text-slate-800 text-sm"></span>
+                </div>
+            </div>
+
+            <!-- Host Organization -->
+            <div class="border border-slate-200 rounded-xl p-5 space-y-3 bg-white">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Host Organization</span>
+                    <h4 id="modalOrgName" class="text-base font-bold text-slate-900 mt-0.5"></h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-slate-600">
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Sector:</strong>
+                        <span id="modalOrgSector"></span>
+                    </div>
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Location:</strong>
+                        <span id="modalOrgCityState"></span>
+                    </div>
+                    <div class="md:col-span-2">
+                        <strong class="text-slate-800 block text-[11px]">Physical Address:</strong>
+                        <span id="modalOrgAddress"></span>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="pt-3 border-t border-slate-100 flex flex-wrap gap-4 text-slate-600">
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Contact Person:</strong>
+                        <span id="modalContactName"></span>
+                    </div>
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Email:</strong>
+                        <span id="modalContactEmail" class="text-blue-900"></span>
+                    </div>
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Phone:</strong>
+                        <span id="modalContactPhone"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">Start Date</span>
+                    <span id="modalStartDate" class="font-bold text-slate-900 text-sm mt-0.5 block"></span>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">End Date</span>
+                    <span id="modalEndDate" class="font-bold text-slate-900 text-sm mt-0.5 block"></span>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">Status</span>
+                    <span id="modalStatus" class="font-bold text-blue-900 text-sm mt-0.5 block"></span>
+                </div>
+            </div>
+
+            <!-- Cover Note -->
+            <div>
+                <strong class="block text-slate-700 uppercase tracking-wider text-[10px] font-bold mb-1.5">Student Cover Note & Training Objectives</strong>
+                <p id="modalCoverNote" class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 leading-relaxed"></p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
+            <button type="button" onclick="closePlacementModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openPlacementModal(data) {
+        document.getElementById('modalStudentName').innerText = data.studentName;
+        document.getElementById('modalRegNumber').innerText = data.regNumber;
+        document.getElementById('modalFaculty').innerText = data.faculty;
+        document.getElementById('modalDepartment').innerText = data.department;
+        document.getElementById('modalOrgName').innerText = data.orgName;
+        document.getElementById('modalOrgSector').innerText = data.orgSector;
+        document.getElementById('modalOrgCityState').innerText = data.orgCityState;
+        document.getElementById('modalOrgAddress').innerText = data.orgAddress;
+        document.getElementById('modalContactName').innerText = data.contactName;
+        document.getElementById('modalContactEmail').innerText = data.contactEmail;
+        document.getElementById('modalContactPhone').innerText = data.contactPhone;
+        document.getElementById('modalStartDate').innerText = data.startDate;
+        document.getElementById('modalEndDate').innerText = data.endDate;
+        document.getElementById('modalStatus').innerText = data.status;
+        document.getElementById('modalCoverNote').innerText = data.coverNote;
+
+        document.getElementById('placementDetailsModal').classList.remove('hidden');
+    }
+
+    function closePlacementModal() {
+        document.getElementById('placementDetailsModal').classList.add('hidden');
+    }
+</script>
 {% endblock %}

@@ -4,12 +4,55 @@ from accounts.models import Student
 
 User = get_user_model()
 
+NIGERIAN_STATES = [
+    ('', '-- Select State --'),
+    ('Abia', 'Abia'),
+    ('Adamawa', 'Adamawa'),
+    ('Akwa Ibom', 'Akwa Ibom'),
+    ('Anambra', 'Anambra'),
+    ('Bauchi', 'Bauchi'),
+    ('Bayelsa', 'Bayelsa'),
+    ('Benue', 'Benue'),
+    ('Borno', 'Borno'),
+    ('Cross River', 'Cross River'),
+    ('Delta', 'Delta'),
+    ('Ebonyi', 'Ebonyi'),
+    ('Edo', 'Edo'),
+    ('Ekiti', 'Ekiti'),
+    ('Enugu', 'Enugu'),
+    ('FCT - Abuja', 'FCT - Abuja'),
+    ('Gombe', 'Gombe'),
+    ('Imo', 'Imo'),
+    ('Jigawa', 'Jigawa'),
+    ('Kaduna', 'Kaduna'),
+    ('Kano', 'Kano'),
+    ('Katsina', 'Katsina'),
+    ('Kebbi', 'Kebbi'),
+    ('Kogi', 'Kogi'),
+    ('Kwara', 'Kwara'),
+    ('Lagos', 'Lagos'),
+    ('Nasarawa', 'Nasarawa'),
+    ('Niger', 'Niger'),
+    ('Ogun', 'Ogun'),
+    ('Ondo', 'Ondo'),
+    ('Osun', 'Osun'),
+    ('Oyo', 'Oyo'),
+    ('Plateau', 'Plateau'),
+    ('Rivers', 'Rivers'),
+    ('Sokoto', 'Sokoto'),
+    ('Taraba', 'Taraba'),
+    ('Yobe', 'Yobe'),
+    ('Zamfara', 'Zamfara'),
+]
+
+
 class LoginForm(forms.Form):
-    username = forms.CharField(
-        label='Username / Reg Number',
+    login_id = forms.CharField(
+        label='Email Address / Reg Number',
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm placeholder-slate-400',
-            'placeholder': 'Enter your username or reg number'
+            'placeholder': 'Enter your email address or registration number',
+            'id': 'id_login_id'
         })
     )
     password = forms.CharField(
@@ -23,28 +66,20 @@ class LoginForm(forms.Form):
 
 
 class StudentRegistrationForm(forms.Form):
-    first_name = forms.CharField(
-        label='First Name',
-        max_length=150,
+    full_name = forms.CharField(
+        label='Full Name',
+        max_length=255,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
-            'placeholder': 'First Name'
+            'placeholder': 'e.g. Fatima Mohammed Aliyu'
         })
     )
-    last_name = forms.CharField(
-        label='Last Name',
-        max_length=150,
+    registration_number = forms.CharField(
+        label='BUK Registration Number',
+        max_length=30,
         widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
-            'placeholder': 'Last Name'
-        })
-    )
-    username = forms.CharField(
-        label='Username',
-        max_length=150,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
-            'placeholder': 'e.g. cst20swe00123'
+            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm uppercase',
+            'placeholder': 'CST/20/SWE/00123'
         })
     )
     email = forms.EmailField(
@@ -54,29 +89,13 @@ class StudentRegistrationForm(forms.Form):
             'placeholder': 'student@student.buk.edu.ng'
         })
     )
-    registration_number = forms.CharField(
-        label='BUK Registration Number',
-        max_length=30,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
-            'placeholder': 'CST/20/SWE/00123'
-        })
-    )
-    phone_number = forms.CharField(
-        label='Phone Number',
-        max_length=20,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
-            'placeholder': '+234 800 000 0000'
-        })
-    )
     faculty = forms.CharField(
         label='Faculty',
         initial='Faculty of Computing',
         required=False,
         widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm'
+            'readonly': 'readonly',
+            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 text-sm cursor-not-allowed select-none'
         })
     )
     department = forms.CharField(
@@ -84,31 +103,8 @@ class StudentRegistrationForm(forms.Form):
         initial='Software Engineering',
         required=False,
         widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm'
-        })
-    )
-    course_of_study = forms.CharField(
-        label='Course of Study',
-        initial='B.Sc. Software Engineering',
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm'
-        })
-    )
-    level = forms.CharField(
-        label='Academic Level',
-        initial='400L',
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm'
-        })
-    )
-    session = forms.CharField(
-        label='SIWES Session',
-        initial='2025/2026',
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm'
+            'readonly': 'readonly',
+            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-500 text-sm cursor-not-allowed select-none'
         })
     )
     password = forms.CharField(
@@ -128,17 +124,19 @@ class StudentRegistrationForm(forms.Form):
         })
     )
 
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("This username is already registered in the system.")
-        return username
-
     def clean_registration_number(self):
-        reg_num = self.cleaned_data.get('registration_number')
-        if Student.objects.filter(registration_number=reg_num).exists():
+        reg_num = self.cleaned_data.get('registration_number', '').strip()
+        if Student.objects.filter(registration_number__iexact=reg_num).exists():
             raise forms.ValidationError("This registration number is already registered in the system.")
+        if User.objects.filter(username__iexact=reg_num).exists():
+            raise forms.ValidationError("An account with this registration number already exists.")
         return reg_num
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '').strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("An account with this email address is already registered.")
+        return email
 
     def clean(self):
         cleaned_data = super().clean()
@@ -151,28 +149,12 @@ class StudentRegistrationForm(forms.Form):
 
 
 class SupervisorCreationForm(forms.Form):
-    first_name = forms.CharField(
-        label='First Name',
-        max_length=150,
+    full_name = forms.CharField(
+        label='Full Name',
+        max_length=255,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
-            'placeholder': 'e.g. Dr. Usman'
-        })
-    )
-    last_name = forms.CharField(
-        label='Last Name',
-        max_length=150,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
-            'placeholder': 'e.g. Suleiman'
-        })
-    )
-    username = forms.CharField(
-        label='Username',
-        max_length=150,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
-            'placeholder': 'e.g. dr_usman'
+            'placeholder': 'e.g. Dr. Usman Suleiman'
         })
     )
     email = forms.EmailField(
@@ -182,13 +164,12 @@ class SupervisorCreationForm(forms.Form):
             'placeholder': 'usman.swe@buk.edu.ng'
         })
     )
-    phone_number = forms.CharField(
-        label='Phone Number',
-        max_length=20,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
-            'placeholder': '+234 800 000 0000'
+    state = forms.ChoiceField(
+        label='Assigned Supervision State',
+        choices=NIGERIAN_STATES,
+        help_text='State where supervisor conducts SIWES host organization inspections',
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm bg-white'
         })
     )
     password = forms.CharField(
@@ -208,11 +189,13 @@ class SupervisorCreationForm(forms.Form):
         })
     )
 
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("This username is already taken.")
-        return username
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '').strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("A user with this email address already exists.")
+        if User.objects.filter(username__iexact=email).exists():
+            raise forms.ValidationError("A user with this username/email already exists.")
+        return email
 
     def clean(self):
         cleaned_data = super().clean()

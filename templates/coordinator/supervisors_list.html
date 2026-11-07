@@ -5,10 +5,11 @@
 {% block content %}
 <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
 
+    <!-- Header Banner -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-slate-900">Academic Supervisors Registry</h1>
-            <p class="text-xs text-slate-500 mt-1">Manage departmental faculty assigned to supervise and evaluate student host organizations.</p>
+            <p class="text-xs text-slate-500 mt-1">Manage departmental faculty, view assigned students on individual supervisor pages, and assign student placements by state.</p>
         </div>
         <div class="flex space-x-3">
             <a href="{% url 'coordinator_create_supervisor' %}" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold shadow transition-colors flex items-center space-x-1">
@@ -21,7 +22,7 @@
         </div>
     </div>
 
-    <!-- Supervisors Table -->
+    <!-- Supervisors Table Card -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center">
             <h2 class="text-base font-bold text-slate-900">Registered Departmental Academic Supervisors</h2>
@@ -33,38 +34,160 @@
                 <table class="w-full text-left text-xs text-slate-700">
                     <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
                         <tr>
-                            <th class="px-6 py-3.5">Name</th>
-                            <th class="px-6 py-3.5">Username</th>
-                            <th class="px-6 py-3.5">Email</th>
-                            <th class="px-6 py-3.5">Phone Number</th>
-                            <th class="px-6 py-3.5">Supervised Placements</th>
-                            <th class="px-6 py-3.5">Date Registered</th>
+                            <th class="px-6 py-4">Supervisor Name</th>
+                            <th class="px-6 py-4">Email Address</th>
+                            <th class="px-6 py-4">Assigned State</th>
+                            <th class="px-6 py-4">Assigned Students</th>
+                            <th class="px-6 py-4">Date Registered</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         {% for sup in supervisors %}
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-bold text-slate-900">{{ sup.get_full_name|default:sup.username }}</td>
-                                <td class="px-6 py-4 font-mono text-slate-600">{{ sup.username }}</td>
-                                <td class="px-6 py-4 text-blue-900 font-medium">{{ sup.email }}</td>
-                                <td class="px-6 py-4">{{ sup.phone_number|default:"N/A" }}</td>
+                            <tr class="hover:bg-slate-50/80 transition-colors">
                                 <td class="px-6 py-4">
-                                    <span class="px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-full font-bold">
-                                        {{ sup.supervised_placements.count }} Placement(s)
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-9 h-9 rounded-xl bg-blue-900 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+                                            {{ sup.first_name|slice:":2"|upper|default:sup.username|slice:":2"|upper }}
+                                        </div>
+                                        <div>
+                                            <span class="font-bold text-slate-900 block">{{ sup.first_name|default:sup.username }}</span>
+                                            <span class="text-[10px] text-slate-400">Faculty Supervisor</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-blue-900 font-medium">
+                                    {{ sup.email }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if sup.state %}
+                                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
+                                            📍 {{ sup.state }}
+                                        </span>
+                                    {% else %}
+                                        <span class="px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 text-slate-500">
+                                            Not set
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-full font-bold">
+                                        {{ sup.supervised_placements.count }} Student(s)
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-slate-500">{{ sup.created_at|date:"M d, Y" }}</td>
+                                <td class="px-6 py-4 text-slate-500">
+                                    {{ sup.created_at|date:"M d, Y" }}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="inline-flex items-center space-x-2">
+                                        <a href="{% url 'coordinator_supervisor_detail' sup.id %}" class="px-3 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-xs font-bold transition-colors inline-flex items-center space-x-1 shadow-sm">
+                                            <span>View Details</span>
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                        </a>
+                                        <button type="button" onclick="openAssignModal('{{ sup.id }}', '{{ sup.first_name|default:sup.username|escapejs }}', '{{ sup.state|default:''|escapejs }}')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
+                                            + Assign
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         {% else %}
-            <div class="p-8 text-center text-xs text-slate-500">
-                No Academic Supervisors registered yet.
+            <div class="p-12 text-center text-slate-500">
+                <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <h3 class="text-base font-bold text-slate-800">No Academic Supervisors Registered</h3>
+                <p class="text-xs text-slate-500 mt-1">Get started by onboarding an academic supervisor.</p>
+                <a href="{% url 'coordinator_create_supervisor' %}" class="mt-4 inline-block px-4 py-2 bg-blue-900 text-white rounded-xl text-xs font-bold">
+                    Add First Supervisor
+                </a>
             </div>
         {% endif %}
     </div>
 
 </div>
+
+<!-- QUICK ASSIGN STUDENT MODAL -->
+<div id="assignStudentModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+        <div class="bg-blue-900 p-6 text-white flex justify-between items-start">
+            <div>
+                <h3 class="text-base font-bold">Assign Student to Academic Supervisor</h3>
+                <p class="text-xs text-blue-200 mt-0.5">
+                    Assigning to: <span id="modalSupervisorName" class="font-bold text-white"></span>
+                    <span id="modalSupervisorStateBadge" class="ml-2 px-2 py-0.5 bg-blue-800 text-sky-200 rounded text-[11px]"></span>
+                </p>
+            </div>
+            <button type="button" onclick="closeAssignModal()" class="text-blue-200 hover:text-white p-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <form method="post" action="{% url 'coordinator_assign_supervisor' %}" class="p-6 space-y-5">
+            {% csrf_token %}
+            <input type="hidden" name="supervisor_id" id="modalSupervisorId" value="">
+            <input type="hidden" name="next" value="{% url 'coordinator_supervisors_list' %}">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Select Student Placement *</label>
+                <select name="placement_id" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-xs bg-white text-slate-800">
+                    <option value="">-- Select an active student placement --</option>
+                    {% for p in available_placements %}
+                        <option value="{{ p.id }}" data-state="{{ p.organization.state }}">
+                            {{ p.student.registration_number }} - {{ p.student.user.first_name|default:p.student.user.username }} @ {{ p.organization.name }} ({{ p.organization.state }})
+                            {% if p.academic_supervisor %} [Currently: {{ p.academic_supervisor.first_name }}]{% else %} [Unassigned]{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+                <p class="text-[11px] text-slate-500 mt-2">
+                    💡 Tip: Options matching the supervisor's state are highlighted in bold green.
+                </p>
+            </div>
+
+            <div class="flex space-x-3 pt-2">
+                <button type="submit" class="flex-1 py-3 px-4 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl shadow-lg transition-colors text-xs uppercase tracking-wider">
+                    Confirm Assignment
+                </button>
+                <button type="button" onclick="closeAssignModal()" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openAssignModal(supervisorId, supervisorName, supervisorState) {
+        document.getElementById('modalSupervisorId').value = supervisorId;
+        document.getElementById('modalSupervisorName').innerText = supervisorName;
+        
+        const stateBadge = document.getElementById('modalSupervisorStateBadge');
+        if (supervisorState) {
+            stateBadge.innerText = '📍 State: ' + supervisorState;
+            stateBadge.classList.remove('hidden');
+        } else {
+            stateBadge.classList.add('hidden');
+        }
+
+        const select = document.querySelector('select[name="placement_id"]');
+        for (let i = 0; i < select.options.length; i++) {
+            const opt = select.options[i];
+            const optState = opt.getAttribute('data-state');
+            if (optState && supervisorState && optState.toLowerCase() === supervisorState.toLowerCase()) {
+                opt.style.fontWeight = 'bold';
+                opt.style.color = '#065f46';
+            } else {
+                opt.style.fontWeight = 'normal';
+                opt.style.color = '';
+            }
+        }
+
+        document.getElementById('assignStudentModal').classList.remove('hidden');
+    }
+
+    function closeAssignModal() {
+        document.getElementById('assignStudentModal').classList.add('hidden');
+    }
+</script>
 {% endblock %}

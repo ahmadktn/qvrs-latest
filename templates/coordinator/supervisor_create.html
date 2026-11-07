@@ -32,35 +32,24 @@
                 </div>
             {% endif %}
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">First Name *</label>
-                    {{ form.first_name }}
-                    {% if form.first_name.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.first_name.errors.0 }}</p>{% endif %}
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Last Name *</label>
-                    {{ form.last_name }}
-                    {% if form.last_name.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.last_name.errors.0 }}</p>{% endif %}
-                </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Full Name *</label>
+                {{ form.full_name }}
+                {% if form.full_name.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.full_name.errors.0 }}</p>{% endif %}
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Username *</label>
-                    {{ form.username }}
-                    {% if form.username.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.username.errors.0 }}</p>{% endif %}
-                </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">BUK Email Address *</label>
                     {{ form.email }}
                     {% if form.email.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.email.errors.0 }}</p>{% endif %}
                 </div>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Phone Number</label>
-                {{ form.phone_number }}
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Supervision State *</label>
+                    {{ form.state }}
+                    {% if form.state.errors %}<p class="text-xs text-red-600 mt-1 font-bold">{{ form.state.errors.0 }}</p>{% endif %}
+                    <p class="text-[10px] text-slate-500 mt-1">Students placed in this state will be assigned to this supervisor.</p>
+                </div>
             </div>
 
             <!-- Password Field with View Toggle -->
@@ -97,7 +86,7 @@
                 <button type="submit" class="flex-1 py-3 px-4 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl shadow-lg transition-colors text-xs uppercase tracking-wider">
                     Register Academic Supervisor Account
                 </button>
-                <a href="{% url 'coordinator_supervisors_list' %}" class="py-3 px-4 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs">Cancel</a>
+                <a href="{% url 'coordinator_supervisors_list' %}" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center">Cancel</a>
             </div>
         </form>
     </div>

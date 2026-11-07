@@ -151,6 +151,102 @@
             {% endif %}
 
             <main class="flex-grow">
+{% elif user.is_authenticated and user.is_supervisor %}
+    <!-- SUPERVISOR SIDEBAR WRAPPER START -->
+    <div class="flex min-h-screen bg-slate-50 flex-1">
+
+        <!-- Left Fixed Sidebar in Onyx & Steel Azure for Supervisors -->
+        <aside class="w-64 bg-onyx text-slate-300 flex flex-col justify-between border-r border-slate-800 shrink-0 sticky top-0 h-screen">
+            <div>
+                <!-- Brand Header with Official BUK Logo -->
+                <div class="p-5 border-b border-slate-800 bg-[#070506] flex items-center space-x-3">
+                    <img src="{% static 'buk_logo.jpeg' %}" alt="BUK Crest" class="w-10 h-10 rounded-lg object-contain bg-white p-0.5 shadow">
+                    <div>
+                        <span class="text-sm font-extrabold text-white block leading-none">BUK-SIWES QOVRS</span>
+                        <span class="text-[10px] text-amber-400 font-semibold tracking-wider uppercase">Supervisor Portal</span>
+                    </div>
+                </div>
+
+                <!-- Supervisor State Badge Strip -->
+         
+
+                <!-- Navigation Sidebar Section Links -->
+                <nav class="p-4 space-y-1.5 text-xs font-semibold">
+                    <div class="text-[10px] uppercase font-bold text-slate-500 tracking-wider px-3 mb-2 pt-2">Faculty Supervision</div>
+                    
+                    <a href="{% url 'supervisor_assessments' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-sky-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 022 2h2a2 2 0 022-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        <span>Supervision Center</span>
+                    </a>
+
+                    <div class="text-[10px] uppercase font-bold text-slate-500 tracking-wider px-3 mb-2 pt-4">Quality & Directory</div>
+
+                    <a href="{% url 'approved_directory' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        <span>Approved Directory</span>
+                    </a>
+
+                    <a href="{% url 'organization_submit' %}" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-steel-azure hover:text-white transition-colors text-slate-300">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span>Submit Organization</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- User Footer Profile Card -->
+            <div class="p-4 border-t border-slate-800 bg-[#070506] flex items-center justify-between">
+                <div class="flex items-center space-x-2.5 overflow-hidden">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500 text-onyx font-bold flex items-center justify-center text-xs shrink-0">
+                        {{ user.first_name|slice:":2"|upper|default:user.username|slice:":2"|upper }}
+                    </div>
+                    <div class="truncate">
+                        <span class="text-xs font-bold text-white block truncate">{{ user.first_name|default:user.username }}</span>
+                        <span class="text-[10px] text-amber-300 font-medium block">Academic Supervisor</span>
+                    </div>
+                </div>
+                <a href="{% url 'logout' %}" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors" title="Sign Out">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Right Content Body -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top Header Bar -->
+            <header class="bg-white border-b border-slate-200 py-3 px-6 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+                <div class="flex items-center space-x-3 text-xs font-semibold text-slate-500">
+                    <img src="{% static 'buk_logo.jpeg' %}" alt="BUK Crest" class="w-7 h-7 rounded object-contain">
+                    <span class="text-steel-azure font-bold">Bayero University Kano</span>
+                    <span>/</span>
+                    <span class="text-slate-700 font-medium">Department of Software Engineering</span>
+                    <span>/</span>
+                    <span class="text-amber-800 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Academic Supervisor Portal</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    {% if user.state %}
+                        <span class="text-xs font-bold text-blue-900 bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg">
+                             {{ user.state }}
+                        </span>
+                    {% endif %}
+                </div>
+            </header>
+
+            <!-- Global Messages Container -->
+            {% if messages %}
+                <div class="max-w-7xl mx-auto px-6 pt-4 w-full">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-xl shadow-sm border mb-3 flex items-start space-x-3 
+                            {% if message.tags == 'error' %}bg-red-50 text-red-800 border-red-200
+                            {% elif message.tags == 'warning' %}bg-amber-50 text-amber-800 border-amber-200
+                            {% elif message.tags == 'success' %}bg-emerald-50 text-emerald-800 border-emerald-200
+                            {% else %}bg-blue-50 text-blue-800 border-blue-200{% endif %}">
+                            <div class="text-sm font-medium flex-1">{{ message }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <main class="flex-grow">
 {% else %}
     <!-- STANDARD TOP NAVBAR WRAPPER START -->
     <header class="bg-steel-azure text-white shadow-lg sticky top-0 z-50">
@@ -187,13 +283,14 @@
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
                     <a href="{% url 'home' %}" class="hover:text-sky-blue transition-colors py-2">Home</a>
-                    <a href="{% url 'approved_directory' %}" class="hover:text-sky-blue transition-colors py-2 flex items-center space-x-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        <span>Approved Directory</span>
-                    </a>
-                    <a href="{% url 'organization_submit' %}" class="hover:text-sky-blue transition-colors py-2">Submit Organization</a>
 
                     {% if user.is_authenticated %}
+                        <a href="{% url 'approved_directory' %}" class="hover:text-sky-blue transition-colors py-2 flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            <span>Approved Directory</span>
+                        </a>
+                        <a href="{% url 'organization_submit' %}" class="hover:text-sky-blue transition-colors py-2">Submit Organization</a>
+
                         {% if user.is_supervisor %}
                             <a href="{% url 'supervisor_assessments' %}" class="text-sky-blue hover:text-white font-semibold py-2">Supervisor Portal</a>
                         {% elif user.is_student %}
@@ -263,6 +360,9 @@
 {% if user.is_authenticated and user.is_coordinator %}
         </div>
     </div>
+{% elif user.is_authenticated and user.is_supervisor %}
+        </div>
+    </div>
 {% else %}
     <!-- Footer in Onyx with BUK Logo -->
     <footer class="bg-onyx text-slate-400 text-sm mt-auto border-t border-slate-800">
@@ -280,8 +380,10 @@
                 <div>
                     <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">Quick Navigation</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="{% url 'approved_directory' %}" class="hover:text-sky-blue transition-colors">Approved Directory</a></li>
-                        <li><a href="{% url 'organization_submit' %}" class="hover:text-sky-blue transition-colors">Submit Host Organization</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'approved_directory' %}" class="hover:text-sky-blue transition-colors">Approved Directory</a></li>
+                            <li><a href="{% url 'organization_submit' %}" class="hover:text-sky-blue transition-colors">Submit Host Organization</a></li>
+                        {% endif %}
                         <li><a href="{% url 'login' %}" class="hover:text-sky-blue transition-colors">Portal Login</a></li>
                     </ul>
                 </div>

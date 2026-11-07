@@ -24,14 +24,25 @@ class OrganizationSubmissionForm(forms.ModelForm):
             'contact_person_phone': forms.TextInput(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm'}),
         }
 
+    def clean_name(self):
+        name = self.cleaned_data.get('name', '').strip()
+        if Organization.objects.filter(name__iexact=name).exists():
+            raise forms.ValidationError(f"The organization '{name}' is already registered in the system. Re-registration is not allowed.")
+        return name
+
+    def clean_registration_number(self):
+        rc = self.cleaned_data.get('registration_number', '').strip()
+        if rc and Organization.objects.filter(registration_number__iexact=rc).exists():
+            raise forms.ValidationError(f"An organization with CAC RC number '{rc}' is already registered in the system.")
+        return rc
+
 
 class TrainingOpportunityForm(forms.ModelForm):
     class Meta:
         model = TrainingOpportunity
-        fields = ['role_title', 'slots_available', 'role_description', 'expected_skills', 'curriculum_relevance_notes']
+        fields = ['role_title', 'role_description', 'expected_skills', 'curriculum_relevance_notes']
         widgets = {
             'role_title': forms.TextInput(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm', 'placeholder': 'e.g., Junior Software Engineering Intern'}),
-            'slots_available': forms.NumberInput(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm', 'min': 1}),
             'role_description': forms.Textarea(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm', 'rows': 3, 'placeholder': 'Specific day-to-day software engineering tasks (photocopying or menial tasks are rejected)...'}),
             'expected_skills': forms.Textarea(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm', 'rows': 2, 'placeholder': 'e.g., Python, Django, Git, REST APIs, PostgreSQL'}),
             'curriculum_relevance_notes': forms.Textarea(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm', 'rows': 2, 'placeholder': 'How this role aligns with B.Sc. Software Engineering curriculum...'}),

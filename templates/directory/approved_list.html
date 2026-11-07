@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Approved Host Organization Directory - Stage 4{% endblock %}
+{% block title %}Approved Host Organization Directory{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
@@ -9,7 +9,7 @@
     <div class="bg-gradient-to-r from-blue-900 to-slate-900 rounded-2xl p-8 text-white shadow-lg mb-8 border border-blue-800">
         <div class="max-w-3xl">
             <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider mb-3 inline-block">
-                Stage 4: Vetted Organization Directory
+                Vetted Organization Directory
             </span>
             <h1 class="text-3xl font-extrabold tracking-tight mb-3">Approved SIWES Host Organizations</h1>
             <p class="text-sm text-slate-300 leading-relaxed">
@@ -99,7 +99,7 @@
                         <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 mb-4 text-xs">
                             <span class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Available Training Opportunity:</span>
                             {% for opp in org.training_opportunities.all %}
-                                <div class="font-bold text-slate-800">{{ opp.role_title }} ({{ opp.slots_available }} slot)</div>
+                                <div class="font-bold text-slate-800">{{ opp.role_title }}</div>
                             {% empty %}
                                 <div class="text-slate-400 italic">General Software Engineering Intern</div>
                             {% endfor %}

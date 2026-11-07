@@ -27,6 +27,7 @@ def home_view(request):
     })
 
 
+@login_required
 def organization_submit_view(request):
     org_form = OrganizationSubmissionForm(request.POST or None)
     role_form = TrainingOpportunityForm(request.POST or None)
@@ -36,8 +37,7 @@ def organization_submit_view(request):
             with transaction.atomic():
                 org = org_form.save(commit=False)
                 org.status = Organization.Status.SUBMITTED
-                if request.user.is_authenticated:
-                    org.created_by = request.user
+                org.created_by = request.user
                 org.save()
 
                 role = role_form.save(commit=False)
@@ -55,6 +55,7 @@ def organization_submit_view(request):
     })
 
 
+@login_required
 def submission_status_view(request, org_id):
     org = get_object_or_404(Organization, id=org_id)
     vetting_record = org.vetting_records.last()
@@ -67,6 +68,7 @@ def submission_status_view(request, org_id):
     })
 
 
+@login_required
 def approved_directory_view(request):
     # Query ONLY approved, non-blacklisted organizations
     query = request.GET.get('q', '').strip()
@@ -119,6 +121,7 @@ def approved_directory_view(request):
     })
 
 
+@login_required
 def org_detail_view(request, org_id):
     org = get_object_or_404(Organization, id=org_id)
 

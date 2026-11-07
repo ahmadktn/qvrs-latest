@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+
+{% block title %}Supervisor Profile - {{ supervisor.first_name|default:supervisor.username }} - Coordinator{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+    <!-- Breadcrumb & Back Link -->
+    <div class="mb-6">
+        <a href="{% url 'coordinator_supervisors_list' %}" class="inline-flex items-center space-x-1.5 text-xs font-bold text-steel-azure hover:text-sky-blue transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            <span>Back to Academic Supervisors Registry</span>
+        </a>
+    </div>
+
+    <!-- Supervisor Profile Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex items-start space-x-4">
+                <div class="w-16 h-16 rounded-2xl bg-blue-900 text-white flex items-center justify-center font-bold text-xl shrink-0 shadow-md">
+                    {{ supervisor.first_name|slice:":2"|upper|default:supervisor.username|slice:":2"|upper }}
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <h1 class="text-2xl font-bold text-slate-900">{{ supervisor.first_name|default:supervisor.username }}</h1>
+                        {% if supervisor.state %}
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-900 border border-blue-200">
+                                📍 Supervision State: {{ supervisor.state }}
+                            </span>
+                        {% else %}
+                            <span class="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                                No State Specified
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 mt-2">
+                        <span class="flex items-center space-x-1.5">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span class="font-medium text-slate-700">{{ supervisor.email }}</span>
+                        </span>
+                        <span>&bull;</span>
+                        <span>Registered on: {{ supervisor.created_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions & Placement Stats -->
+            <div class="flex items-center space-x-4">
+                <div class="text-right hidden sm:block">
+                    <span class="text-2xl font-black text-slate-900 block leading-tight">{{ supervised_placements.count }}</span>
+                    <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Supervised Students</span>
+                </div>
+                <button type="button" onclick="openAssignModal()" class="px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white rounded-xl text-xs font-bold shadow-md transition-colors flex items-center space-x-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                    <span>Assign Student</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Students List Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+                <h2 class="text-base font-bold text-slate-900">Assigned Students Directory</h2>
+                <p class="text-xs text-slate-500 mt-0.5">Students currently allocated to {{ supervisor.first_name|default:supervisor.username }} for institutional supervision.</p>
+            </div>
+            <span class="px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-full text-xs font-bold self-start sm:self-auto">
+                {{ supervised_placements.count }} Assigned
+            </span>
+        </div>
+
+        {% if supervised_placements %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-4">Student Name</th>
+                            <th class="px-6 py-4">Registration No.</th>
+                            <th class="px-6 py-4">Host Organization</th>
+                            <th class="px-6 py-4">Location / State</th>
+                            <th class="px-6 py-4">State Match</th>
+                            <th class="px-6 py-4">Placement Status</th>
+                            <th class="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for placement in supervised_placements %}
+                            <tr class="hover:bg-slate-50/80 transition-colors">
+                                <td class="px-6 py-4 font-bold text-slate-900">
+                                    {{ placement.student.user.first_name|default:placement.student.user.username }}
+                                </td>
+                                <td class="px-6 py-4 font-mono font-semibold text-blue-900">
+                                    {{ placement.student.registration_number }}
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-slate-800">
+                                    {{ placement.organization.name }}
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">
+                                    {{ placement.organization.city }}, {{ placement.organization.state }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if supervisor.state and placement.organization.state|lower == supervisor.state|lower %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                            ✓ In Supervisor's State
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                                            Different State ({{ placement.organization.state }})
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold 
+                                        {% if placement.status == 'ONGOING' %}bg-blue-100 text-blue-900
+                                        {% elif placement.status == 'COMPLETED' %}bg-emerald-100 text-emerald-900
+                                        {% else %}bg-slate-100 text-slate-700{% endif %}">
+                                        {{ placement.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="inline-flex items-center space-x-2">
+                                        <button type="button" 
+                                            onclick="openPlacementModal({
+                                                studentName: '{{ placement.student.user.first_name|default:placement.student.user.username|escapejs }}',
+                                                regNumber: '{{ placement.student.registration_number|escapejs }}',
+                                                faculty: '{{ placement.student.faculty|default:'Faculty of Computing'|escapejs }}',
+                                                department: '{{ placement.student.department|default:'Software Engineering'|escapejs }}',
+                                                orgName: '{{ placement.organization.name|escapejs }}',
+                                                orgSector: '{{ placement.organization.industry_sector|escapejs }}',
+                                                orgAddress: '{{ placement.organization.address|escapejs }}',
+                                                orgCityState: '{{ placement.organization.city|escapejs }}, {{ placement.organization.state|escapejs }}',
+                                                supervisorState: '{{ supervisor.state|default:''|escapejs }}',
+                                                orgState: '{{ placement.organization.state|escapejs }}',
+                                                startDate: '{{ placement.start_date|date:'M d, Y' }}',
+                                                endDate: '{{ placement.end_date|date:'M d, Y' }}',
+                                                status: '{{ placement.get_status_display|escapejs }}',
+                                                coverNote: '{{ placement.placement_request.cover_note|default:'No cover note submitted.'|escapejs }}',
+                                                contactName: '{{ placement.organization.contact_person_name|escapejs }}',
+                                                contactEmail: '{{ placement.organization.contact_person_email|escapejs }}',
+                                                contactPhone: '{{ placement.organization.contact_person_phone|escapejs }}'
+                                            })" 
+                                            class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-900 rounded-lg text-xs font-bold transition-colors inline-flex items-center space-x-1 border border-blue-200">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                            <span>View Details</span>
+                                        </button>
+                                        <form method="post" action="{% url 'coordinator_unassign_supervisor' placement.id %}" onsubmit="return confirm('Are you sure you want to unassign student {{ placement.student.registration_number }} from this supervisor?');" class="inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{% url 'coordinator_supervisor_detail' supervisor.id %}">
+                                            <button type="submit" class="px-2.5 py-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg text-xs font-bold transition-colors">
+                                                Unassign
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="py-12 px-6 text-center text-slate-500">
+                <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <h3 class="text-base font-bold text-slate-800">No Students Assigned Yet</h3>
+                <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+                    {{ supervisor.first_name|default:supervisor.username }} currently has no students assigned. Click the button below to assign students placed within <strong>{{ supervisor.state|default:"any state" }}</strong>.
+                </p>
+                <button type="button" onclick="openAssignModal()" class="mt-4 inline-flex items-center space-x-1.5 px-4 py-2 bg-blue-900 text-white rounded-xl text-xs font-bold shadow-md hover:bg-blue-800 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <span>Assign First Student</span>
+                </button>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- PLACEMENT DETAILS MODAL -->
+<div id="placementDetailsModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all max-h-[90vh] flex flex-col">
+        <!-- Modal Header -->
+        <div class="bg-steel-azure p-6 text-white flex justify-between items-start shrink-0">
+            <div>
+                <span class="px-2.5 py-0.5 rounded text-[10px] font-extrabold bg-sky-200 text-steel-azure uppercase tracking-wider block w-fit mb-1.5">
+                    SIWES Placement Record
+                </span>
+                <h3 id="modalStudentName" class="text-xl font-bold"></h3>
+                <p id="modalRegNumber" class="text-xs text-sky-200 font-mono mt-0.5"></p>
+            </div>
+            <button type="button" onclick="closePlacementModal()" class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 space-y-6 overflow-y-auto text-xs">
+            <!-- Student Departmental Context -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 gap-4">
+                <div>
+                    <span class="text-slate-400 block uppercase tracking-wider text-[10px] font-bold">Faculty</span>
+                    <span id="modalFaculty" class="font-bold text-slate-800 text-sm"></span>
+                </div>
+                <div>
+                    <span class="text-slate-400 block uppercase tracking-wider text-[10px] font-bold">Department</span>
+                    <span id="modalDepartment" class="font-bold text-slate-800 text-sm"></span>
+                </div>
+            </div>
+
+            <!-- Host Organization Section -->
+            <div class="border border-slate-200 rounded-xl p-5 space-y-3 bg-white">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Host Organization</span>
+                        <h4 id="modalOrgName" class="text-base font-bold text-slate-900 mt-0.5"></h4>
+                    </div>
+                    <span id="modalStateMatchBadge" class="px-2.5 py-1 rounded text-[10px] font-bold"></span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-slate-600">
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Sector:</strong>
+                        <span id="modalOrgSector"></span>
+                    </div>
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Location:</strong>
+                        <span id="modalOrgCityState"></span>
+                    </div>
+                    <div class="md:col-span-2">
+                        <strong class="text-slate-800 block text-[11px]">Address:</strong>
+                        <span id="modalOrgAddress"></span>
+                    </div>
+                </div>
+
+                <!-- Contact Person -->
+                <div class="pt-3 border-t border-slate-100 flex flex-wrap gap-4 text-slate-600">
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Contact Person:</strong>
+                        <span id="modalContactName"></span>
+                    </div>
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Email:</strong>
+                        <span id="modalContactEmail" class="text-blue-900"></span>
+                    </div>
+                    <div>
+                        <strong class="text-slate-800 block text-[11px]">Phone:</strong>
+                        <span id="modalContactPhone"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placement Schedule & Status -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">Start Date</span>
+                    <span id="modalStartDate" class="font-bold text-slate-900 text-sm mt-0.5 block"></span>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">End Date</span>
+                    <span id="modalEndDate" class="font-bold text-slate-900 text-sm mt-0.5 block"></span>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">Placement Status</span>
+                    <span id="modalStatus" class="font-bold text-blue-900 text-sm mt-0.5 block"></span>
+                </div>
+            </div>
+
+            <!-- Cover Note / Training Objectives -->
+            <div>
+                <strong class="block text-slate-700 uppercase tracking-wider text-[10px] font-bold mb-1.5">Student Cover Note & Training Objectives</strong>
+                <p id="modalCoverNote" class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 leading-relaxed"></p>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
+            <button type="button" onclick="closePlacementModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ASSIGN STUDENT MODAL -->
+<div id="assignStudentModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+        <div class="bg-blue-900 p-6 text-white flex justify-between items-start">
+            <div>
+                <h3 class="text-base font-bold">Assign Student to Academic Supervisor</h3>
+                <p class="text-xs text-blue-200 mt-0.5">
+                    Assigning to: <span class="font-bold text-white">{{ supervisor.first_name|default:supervisor.username }}</span>
+                    {% if supervisor.state %}
+                        <span class="ml-2 px-2 py-0.5 bg-blue-800 text-sky-200 rounded text-[11px]">📍 State: {{ supervisor.state }}</span>
+                    {% endif %}
+                </p>
+            </div>
+            <button type="button" onclick="closeAssignModal()" class="text-blue-200 hover:text-white p-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <form method="post" action="{% url 'coordinator_assign_supervisor' %}" class="p-6 space-y-5">
+            {% csrf_token %}
+            <input type="hidden" name="supervisor_id" value="{{ supervisor.id }}">
+            <input type="hidden" name="next" value="{% url 'coordinator_supervisor_detail' supervisor.id %}">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Select Student Placement *</label>
+                <select name="placement_id" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-xs bg-white text-slate-800">
+                    <option value="">-- Select an active student placement --</option>
+                    {% for p in available_placements %}
+                        <option value="{{ p.id }}" 
+                            {% if supervisor.state and p.organization.state|lower == supervisor.state|lower %}style="font-weight: bold; color: #065f46;"{% endif %}>
+                            {{ p.student.registration_number }} - {{ p.student.user.first_name|default:p.student.user.username }} @ {{ p.organization.name }} ({{ p.organization.state }})
+                            {% if supervisor.state and p.organization.state|lower == supervisor.state|lower %} [Matches State: {{ supervisor.state }}]{% endif %}
+                            {% if p.academic_supervisor %} [Currently: {{ p.academic_supervisor.first_name }}]{% else %} [Unassigned]{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+                <p class="text-[11px] text-slate-500 mt-2">
+                    💡 Tip: Options matching the supervisor's state (<strong>{{ supervisor.state|default:'N/A' }}</strong>) are highlighted in bold green.
+                </p>
+            </div>
+
+            <div class="flex space-x-3 pt-2">
+                <button type="submit" class="flex-1 py-3 px-4 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl shadow-lg transition-colors text-xs uppercase tracking-wider">
+                    Confirm Assignment
+                </button>
+                <button type="button" onclick="closeAssignModal()" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openPlacementModal(data) {
+        document.getElementById('modalStudentName').innerText = data.studentName;
+        document.getElementById('modalRegNumber').innerText = data.regNumber;
+        document.getElementById('modalFaculty').innerText = data.faculty;
+        document.getElementById('modalDepartment').innerText = data.department;
+        document.getElementById('modalOrgName').innerText = data.orgName;
+        document.getElementById('modalOrgSector').innerText = data.orgSector;
+        document.getElementById('modalOrgCityState').innerText = data.orgCityState;
+        document.getElementById('modalOrgAddress').innerText = data.orgAddress;
+        document.getElementById('modalContactName').innerText = data.contactName;
+        document.getElementById('modalContactEmail').innerText = data.contactEmail;
+        document.getElementById('modalContactPhone').innerText = data.contactPhone;
+        document.getElementById('modalStartDate').innerText = data.startDate;
+        document.getElementById('modalEndDate').innerText = data.endDate;
+        document.getElementById('modalStatus').innerText = data.status;
+        document.getElementById('modalCoverNote').innerText = data.coverNote;
+
+        const badge = document.getElementById('modalStateMatchBadge');
+        if (data.supervisorState && data.orgState && data.supervisorState.toLowerCase() === data.orgState.toLowerCase()) {
+            badge.className = 'px-2.5 py-1 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+            badge.innerText = '✓ In Supervisor State (' + data.supervisorState + ')';
+        } else {
+            badge.className = 'px-2.5 py-1 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300';
+            badge.innerText = 'Different State (' + data.orgState + ')';
+        }
+
+        document.getElementById('placementDetailsModal').classList.remove('hidden');
+    }
+
+    function closePlacementModal() {
+        document.getElementById('placementDetailsModal').classList.add('hidden');
+    }
+
+    function openAssignModal() {
+        document.getElementById('assignStudentModal').classList.remove('hidden');
+    }
+
+    function closeAssignModal() {
+        document.getElementById('assignStudentModal').classList.add('hidden');
+    }
+</script>
+{% endblock %}
