@@ -52,6 +52,7 @@ class RequirementsVerificationTests(TestCase):
             services_provided='Software engineering and cloud deployment',
             address='12 BUK Road, Kano',
             city='Kano',
+            local_government='Kano Municipal',
             state='Kano',
             contact_person_name='Musa Ibrahim',
             contact_person_email='musa@kanosoft.com',
@@ -238,6 +239,7 @@ class RequirementsVerificationTests(TestCase):
             'services_provided': 'Payment services',
             'address': 'Kano',
             'city': 'Kano',
+            'local_government': 'Kano Municipal',
             'state': 'Kano',
             'contact_person_name': 'Test',
             'contact_person_email': 'test@test.com',
@@ -258,6 +260,7 @@ class RequirementsVerificationTests(TestCase):
             'services_provided': 'Payment services',
             'address': 'Kano',
             'city': 'Kano',
+            'local_government': 'Kano Municipal',
             'state': 'Kano',
             'contact_person_name': 'Test',
             'contact_person_email': 'test@test.com',
@@ -308,3 +311,81 @@ class RequirementsVerificationTests(TestCase):
         self.assertNotContains(home_res, 'Browse Approved Organizations')
         self.assertNotContains(home_res, 'Register / Submit Organization')
         self.assertContains(home_res, 'Sign In to Portal')
+
+    # 6. Organization registration restricted to students only & buttons removed from admin/supervisor pages
+    def test_only_student_can_register_organization(self):
+        # Coordinator is blocked
+        self.client.force_login(self.coord_user)
+        coord_res = self.client.get(reverse('organization_submit'), follow=True)
+        self.assertRedirects(coord_res, reverse('coordinator_dashboard'))
+        self.assertContains(coord_res, "Only registered students are permitted to submit host organizations")
+
+        # Supervisor is blocked
+        self.client.force_login(self.supervisor_user)
+        sup_res = self.client.get(reverse('organization_submit'), follow=True)
+        self.assertRedirects(sup_res, reverse('supervisor_assessments'))
+        self.assertContains(sup_res, "Only registered students are permitted to submit host organizations")
+
+        # Supervisor pages do not contain submit firm button
+        sup_dash = self.client.get(reverse('supervisor_assessments'))
+        self.assertNotContains(sup_dash, '+ Submit Firm')
+        self.assertNotContains(sup_dash, reverse('organization_submit'))
+
+        # Coordinator layout does not contain + Submit Organization button
+        coord_dash = self.client.get(reverse('coordinator_dashboard'))
+        self.assertNotContains(coord_dash, '+ Submit Organization')
+        self.assertNotContains(coord_dash, reverse('organization_submit'))
+
+        # Student CAN access organization_submit
+        self.client.force_login(self.student_user)
+        student_res = self.client.get(reverse('organization_submit'))
+        self.assertEqual(student_res.status_code, 200)
+        self.assertContains(student_res, 'Host Organization & Training Role Submission')
+
+    # 7. Additional field: local government when registering an organization
+    def test_local_government_in_organization_submission(self):
+        self.client.force_login(self.student_user)
+        res = self.client.get(reverse('organization_submit'))
+        self.assertContains(res, 'Local Government')
+        self.assertIn('local_government', res.context['org_form'].fields)
+
+        # Successful submission with local_government
+        post_res = self.client.post(reverse('organization_submit'), {
+            'name': 'Brand New Tech Hub',
+            'registration_number': 'RC-555123',
+            'industry_sector': 'Cloud Computing',
+            'services_provided': 'Cloud solutions and API development',
+            'address': 'No. 20 Airport Road',
+            'city': 'Kano',
+            'local_government': 'Nassarawa',
+            'state': 'Kano',
+            'contact_person_name': 'Aliyu Sanusi',
+            'contact_person_email': 'aliyu@brandnewtech.ng',
+            'contact_person_phone': '08099887766',
+            'role_title': 'Junior Cloud Engineer',
+            'role_description': 'Deploying microservices and monitoring Kubernetes clusters',
+            'expected_skills': 'Docker, Kubernetes, AWS',
+            'curriculum_relevance_notes': 'Relevant to software engineering systems modules',
+        }, follow=True)
+        self.assertEqual(post_res.status_code, 200)
+
+        created_org = Organization.objects.get(name='Brand New Tech Hub')
+        self.assertEqual(created_org.local_government, 'Nassarawa')
+        self.assertEqual(created_org.created_by, self.student_user)
+
+    # 8. Registration pages should not use 'BUK EMAIL', only 'Email'
+    def test_registration_pages_no_buk_email(self):
+        # Student registration page
+        res_student = self.client.get(reverse('register_student'))
+        self.assertEqual(res_student.status_code, 200)
+        self.assertNotContains(res_student, 'BUK Email')
+        self.assertNotContains(res_student, 'BUK EMAIL')
+        self.assertContains(res_student, 'Email *')
+
+        # Supervisor registration page
+        res_supervisor = self.client.get(reverse('register_supervisor'))
+        self.assertEqual(res_supervisor.status_code, 200)
+        self.assertNotContains(res_supervisor, 'BUK Email')
+        self.assertNotContains(res_supervisor, 'BUK EMAIL')
+        self.assertContains(res_supervisor, 'Email *')
+

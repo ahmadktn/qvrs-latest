@@ -11,10 +11,16 @@
             <h1 class="text-2xl font-bold text-slate-900">{{ student.user.get_full_name }}</h1>
             <p class="text-xs text-slate-500">{{ student.registration_number }} &bull; {{ student.course_of_study }} ({{ student.level }})</p>
         </div>
-        <a href="{% url 'approved_directory' %}" class="px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl text-xs shadow transition-colors flex items-center space-x-1">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <span>Browse Approved Host Organizations</span>
-        </a>
+        <div class="flex flex-wrap items-center gap-3">
+            <a href="{% url 'approved_directory' %}" class="px-4 py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold rounded-xl text-xs shadow transition-colors flex items-center space-x-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span>Browse Approved Host Organizations</span>
+            </a>
+            <a href="{% url 'organization_submit' %}" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow transition-colors flex items-center space-x-1">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <span>Register New Organization</span>
+            </a>
+        </div>
     </div>
 
     <!-- Active Placement Banner if any -->

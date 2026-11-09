@@ -6,7 +6,7 @@ class OrganizationSubmissionForm(forms.ModelForm):
         model = Organization
         fields = [
             'name', 'registration_number', 'industry_sector',
-            'services_provided', 'address', 'city', 'state',
+            'services_provided', 'address', 'city', 'local_government', 'state',
             'website', 'contact_person_name', 'contact_person_email',
             'contact_person_phone'
         ]
@@ -17,6 +17,7 @@ class OrganizationSubmissionForm(forms.ModelForm):
             'services_provided': forms.Textarea(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm', 'rows': 3, 'placeholder': 'Describe core business operations and technical products...'}),
             'address': forms.Textarea(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm', 'rows': 2, 'placeholder': 'Physical office address...'}),
             'city': forms.TextInput(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm'}),
+            'local_government': forms.TextInput(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm', 'placeholder': 'e.g., Kano Municipal, Nassarawa, Gwale'}),
             'state': forms.TextInput(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm'}),
             'website': forms.URLInput(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm', 'placeholder': 'https://example.com'}),
             'contact_person_name': forms.TextInput(attrs={'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm'}),

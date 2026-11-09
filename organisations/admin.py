@@ -7,9 +7,9 @@ class TrainingOpportunityInline(admin.TabularInline):
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'industry_sector', 'status', 'city', 'contact_person_name', 'created_at')
-    list_filter = ('status', 'industry_sector', 'state')
-    search_fields = ('name', 'industry_sector', 'services_provided', 'contact_person_name')
+    list_display = ('name', 'industry_sector', 'status', 'city', 'local_government', 'state', 'contact_person_name', 'created_at')
+    list_filter = ('status', 'industry_sector', 'state', 'local_government')
+    search_fields = ('name', 'industry_sector', 'services_provided', 'contact_person_name', 'local_government', 'city')
     inlines = [TrainingOpportunityInline]
 
 @admin.register(TrainingOpportunity)

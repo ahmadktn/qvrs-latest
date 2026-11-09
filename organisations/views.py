@@ -29,6 +29,10 @@ def home_view(request):
 
 @login_required
 def organization_submit_view(request):
+    if not getattr(request.user, 'is_student', False):
+        messages.error(request, "Only registered students are permitted to submit host organizations for departmental vetting.")
+        return redirect('dashboard')
+
     org_form = OrganizationSubmissionForm(request.POST or None)
     role_form = TrainingOpportunityForm(request.POST or None)
 

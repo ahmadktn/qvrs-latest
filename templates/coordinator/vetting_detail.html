@@ -49,7 +49,7 @@
                     </div>
                     <div>
                         <span class="text-slate-500 block">Location:</span>
-                        <strong class="text-slate-900">{{ org.city }}, {{ org.state }}</strong>
+                        <strong class="text-slate-900">{{ org.city }}{% if org.local_government %}, {{ org.local_government }}{% endif %}, {{ org.state }}</strong>
                     </div>
                     <div>
                         <span class="text-slate-500 block">Website:</span>

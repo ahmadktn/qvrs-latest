@@ -83,7 +83,7 @@ class StudentRegistrationForm(forms.Form):
         })
     )
     email = forms.EmailField(
-        label='BUK Email Address',
+        label='Email',
         widget=forms.EmailInput(attrs={
             'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
             'placeholder': 'student@student.buk.edu.ng'
@@ -158,7 +158,7 @@ class SupervisorCreationForm(forms.Form):
         })
     )
     email = forms.EmailField(
-        label='BUK Email Address',
+        label='Email',
         widget=forms.EmailInput(attrs={
             'class': 'w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent text-slate-800 text-sm',
             'placeholder': 'usman.swe@buk.edu.ng'

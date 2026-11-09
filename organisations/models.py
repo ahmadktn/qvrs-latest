@@ -18,6 +18,7 @@ class Organization(models.Model):
     services_provided = models.TextField(help_text="Detailed description of core business operations")
     address = models.TextField(help_text="Physical corporate address")
     city = models.CharField(max_length=100, default='Kano')
+    local_government = models.CharField(max_length=100, default='', verbose_name="Local Government", help_text="Local Government Area (LGA)")
     state = models.CharField(max_length=100, default='Kano')
     website = models.URLField(blank=True)
     contact_person_name = models.CharField(max_length=150)
