@@ -31,6 +31,12 @@ class OrganizationSubmissionForm(forms.ModelForm):
             raise forms.ValidationError(f"The organization '{name}' is already registered in the system. Re-registration is not allowed.")
         return name
 
+    def clean_local_government(self):
+        lg = self.cleaned_data.get('local_government', '').strip()
+        if not lg:
+            raise forms.ValidationError("Local government is required.")
+        return lg
+
     def clean_registration_number(self):
         rc = self.cleaned_data.get('registration_number', '').strip()
         if rc and Organization.objects.filter(registration_number__iexact=rc).exists():

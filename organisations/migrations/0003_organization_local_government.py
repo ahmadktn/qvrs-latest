@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organization',
             name='local_government',
-            field=models.CharField(default='', help_text='Local Government Area (LGA)', max_length=100),
+            field=models.CharField(default='', help_text='Local Government Area (LGA)', max_length=100, verbose_name='Local Government'),
         ),
     ]
 
