@@ -315,13 +315,13 @@ class RequirementsVerificationTests(TestCase):
     # 6. Organization registration restricted to students only & buttons removed from admin/supervisor pages
     def test_only_student_can_register_organization(self):
         # Coordinator is blocked
-        self.client.force_login(self.coord_user)
+        self.client.force_login(self.coord)
         coord_res = self.client.get(reverse('organization_submit'), follow=True)
         self.assertRedirects(coord_res, reverse('coordinator_dashboard'))
         self.assertContains(coord_res, "Only registered students are permitted to submit host organizations")
 
         # Supervisor is blocked
-        self.client.force_login(self.supervisor_user)
+        self.client.force_login(self.sup)
         sup_res = self.client.get(reverse('organization_submit'), follow=True)
         self.assertRedirects(sup_res, reverse('supervisor_assessments'))
         self.assertContains(sup_res, "Only registered students are permitted to submit host organizations")
@@ -332,6 +332,7 @@ class RequirementsVerificationTests(TestCase):
         self.assertNotContains(sup_dash, reverse('organization_submit'))
 
         # Coordinator layout does not contain + Submit Organization button
+        self.client.force_login(self.coord)
         coord_dash = self.client.get(reverse('coordinator_dashboard'))
         self.assertNotContains(coord_dash, '+ Submit Organization')
         self.assertNotContains(coord_dash, reverse('organization_submit'))
